@@ -22,7 +22,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=2026-10-13c">
+  <link rel="stylesheet" href="css/style.css?v=2026-10-13e">
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -305,9 +305,101 @@
       </div>
     </section>
 
+    <!-- ============================================================ keep or finance -->
+    <section class="block" id="keep" aria-labelledby="keep-title">
+      <h2 class="block-title" id="keep-title"><span class="block-num">3</span> Keep your car, or finance an EV?</h2>
+      <p class="block-lede">Can the fuel you'd stop buying pay the EV's monthly instalment? Your current car is the fuel car from section 1, so set its fuel and consumption there; the EV's charging comes from there too.</p>
+
+      <div class="calc-layout">
+        <form class="inputs" id="keep-form" autocomplete="off" novalidate>
+          <fieldset>
+            <legend><span class="dot dot--ev" aria-hidden="true"></span> The EV's instalment</legend>
+            <div class="field">
+              <label for="instalment">Monthly instalment</label>
+              <div class="with-unit"><span class="unit-before">R</span><input id="instalment" type="number" inputmode="numeric" min="0" step="100"><span>/ month</span></div>
+              <p class="hint" id="instalment-hint"></p>
+            </div>
+            <div class="field-row field-row--end">
+              <div class="field">
+                <label for="finPrice">EV price</label>
+                <div class="with-unit"><span class="unit-before">R</span><input id="finPrice" type="number" inputmode="numeric" min="0" step="5000"></div>
+              </div>
+              <div class="field">
+                <label for="finDeposit">Deposit or trade-in</label>
+                <div class="with-unit"><span class="unit-before">R</span><input id="finDeposit" type="number" inputmode="numeric" min="0" step="5000"></div>
+              </div>
+            </div>
+            <div class="field-row field-row--3 field-row--end field-row--fin">
+              <div class="field">
+                <label for="finRate">Interest</label>
+                <div class="with-unit"><input id="finRate" type="number" inputmode="decimal" min="0" max="40" step="0.25"><span>%</span></div>
+              </div>
+              <div class="field">
+                <label for="finMonths">Term</label>
+                <div class="with-unit"><input id="finMonths" type="number" inputmode="numeric" min="12" max="96" step="12"><span>mo</span></div>
+              </div>
+              <div class="field">
+                <label for="finBalloon">Balloon</label>
+                <div class="with-unit"><input id="finBalloon" type="number" inputmode="numeric" min="0" max="60" step="5"><span>%</span></div>
+              </div>
+            </div>
+            <p class="hint" id="finance-hint"></p>
+          </fieldset>
+
+          <fieldset>
+            <legend>Other monthly costs</legend>
+            <div class="field-row field-row--end">
+              <div class="field">
+                <label for="oldRepairsMonth">Your car's servicing and repairs</label>
+                <div class="with-unit"><span class="unit-before">R</span><input id="oldRepairsMonth" type="number" inputmode="numeric" min="0" step="100"><span>/ month</span></div>
+              </div>
+              <div class="field">
+                <label for="evServiceMonth">The EV's servicing</label>
+                <div class="with-unit"><span class="unit-before">R</span><input id="evServiceMonth" type="number" inputmode="numeric" min="0" step="100"><span>/ month</span></div>
+              </div>
+            </div>
+            <p class="hint">Average out a year: services, tyres and the repairs an older car needs. R800 is an example. Use 0 for the EV if it comes with a service plan.</p>
+            <div class="field">
+              <label for="evIns">Extra insurance for the EV</label>
+              <div class="with-unit"><span class="unit-before">R</span><input id="evIns" type="number" inputmode="numeric" min="0" step="50"><span>/ month</span></div>
+              <p class="hint">A new car, and an EV especially, usually costs more to insure than an older car. Get a quote and enter the difference.</p>
+            </div>
+          </fieldset>
+        </form>
+
+        <div class="results" id="keep-results" aria-live="polite">
+          <div class="result-card">
+            <p class="headline" id="keep-headline"></p>
+            <div class="tiles">
+              <div class="tile tile--fuel">
+                <p class="tile-label">Keep your car</p>
+                <p class="tile-value" id="keep-total"></p>
+                <p class="tile-sub" id="keep-sub"></p>
+              </div>
+              <div class="tile tile--ev">
+                <p class="tile-label">Finance the EV</p>
+                <p class="tile-value" id="buy-total"></p>
+                <p class="tile-sub" id="buy-sub"></p>
+              </div>
+            </div>
+            <p class="save" id="keep-save"></p>
+          </div>
+          <div class="result-card">
+            <h3 class="card-title">Where the money goes each month</h3>
+            <div class="stack" id="keep-stack"></div>
+          </div>
+          <div class="result-card">
+            <h3 class="card-title">What would make it pay</h3>
+            <ul class="facts" id="keep-facts"></ul>
+            <p class="hint">Not counted: you'd own a newer car (and your old one's value is only counted if you put it in as a trade-in), any balloon still owed at the end, and fuel or electricity price rises.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- ============================================================ buying -->
     <section class="block" id="buying" aria-labelledby="buying-title">
-      <h2 class="block-title" id="buying-title"><span class="block-num">3</span> Thinking of buying?</h2>
+      <h2 class="block-title" id="buying-title"><span class="block-num">4</span> Buying outright: total cost</h2>
       <p class="block-lede">An EV usually costs more to buy and less to run. This shows when (or whether) the running savings pay back the difference, using your driving and charging from section 1.</p>
 
       <div class="calc-layout">
@@ -379,7 +471,7 @@
 
     <!-- ============================================================ good to know -->
     <section class="block" id="know" aria-labelledby="know-title">
-      <h2 class="block-title" id="know-title"><span class="block-num">4</span> Good to know</h2>
+      <h2 class="block-title" id="know-title"><span class="block-num">5</span> Good to know</h2>
       <div class="know-grid">
         <article class="know">
           <h3>Where you charge decides everything</h3>
@@ -443,9 +535,9 @@
     </div>
   </footer>
 
-  <script src="js/data.js?v=2026-10-13c"></script>
-  <script src="js/calc.js?v=2026-10-13c"></script>
-  <script src="js/app.js?v=2026-10-13c"></script>
+  <script src="js/data.js?v=2026-10-13e"></script>
+  <script src="js/calc.js?v=2026-10-13e"></script>
+  <script src="js/app.js?v=2026-10-13e"></script>
 
   <!-- GoatCounter: cookie-free page-visit stats at https://psyphin.goatcounter.com/ (never sees form inputs) -->
   <!-- Shared with psyphin.co.za: prefix paths with the host so this site's "/" is counted separately -->

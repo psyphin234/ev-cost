@@ -23,12 +23,13 @@ Plain HTML/CSS/vanilla JS, classic scripts, no build step: `index.html` opens st
 
 - An EV figure is either **spec-sheet (WLTP)**, measured at the wall so it already includes charging losses, or **trip computer**, measured at the battery, so losses are added. `evPer100()` returns both sides: `wall` (what you pay for) and `battery` (what range uses).
 - Trip: battery use = battery-side consumption × (1 + highway %). Leaves home at the start %, drives to the reserve, then each stop charges reserve → charge-to %; the last stop only takes enough to arrive on the reserve. Billed kWh = battery kWh ÷ (1 − losses). Charging time = kWh ÷ average kW.
+- **Keep your car, or finance an EV?** (section 3, owner's request 2026-10-13: "we want to buy a new car or keep the old one, but if the new one's fuel savings can cover the new monthly cost, then it's worth considering"). The current car is section 1's fuel car. Keep = fuel + its servicing and repairs a month (R800 example). Finance = instalment + electricity + EV servicing + extra insurance (both default 0). `instalment` is `null` = worked out by `C.instalment()` (ordinary amortisation, monthly interest, optional balloon as % of price) from the shared EV price, deposit/trade-in, rate (default prime 10.75%, from 24 Sept 2026, `finance` in data.js) and term (72 months); typing a quote overrides it, with a "Use that" button back, like the fuel price. The EV price box here (`finPrice`) and section 4's (`evPrice`) are the same state. Results: what share of the instalment the savings cover, the biggest instalment they'd cover and the car price that buys (`C.priceFor`, the inverse), the km a month at which it breaks even, what it saves once paid off, and a stacked monthly bar. **Update the prime rate when the SARB changes the repo rate.**
 - Ownership: year 0 = prices (+ home charger for the EV); each year adds energy (with the yearly rises compounding) + servicing; break-even is interpolated between years. Insurance, finance and resale are left out (the page says so).
 
 ## Structure
 
 ```
-index.html     The page: 1 everyday driving, 2 road trip, 3 thinking of buying, 4 good to know, sources, disclaimer
+index.html     The page: 1 everyday driving, 2 road trip, 3 keep your car or finance an EV, 4 buying outright: total cost, 5 good to know, sources, disclaimer
 js/data.js     THE data file: sources, fuel fallback, live feed settings, tariffs, size presets, routes, N3 chargers, defaults, assumptions
 js/calc.js     Pure calculations (no DOM): evPer100, running, trip, tripProfile, ownership
 js/app.js      State + localStorage, live fuel fetch, inputs, rendering, the two SVG charts, the sources section, the phones' bottom bar

@@ -81,6 +81,12 @@ window.EV = (function () {
       url: "https://www.grc.nasa.gov/www/k-12/rocket/drageq.html",
       publisher: "NASA Glenn Research Center"
     },
+    primeRate: {
+      title: "SARB raises repo rate to 7.25%: prime lending rate now 10.75%",
+      url: "https://briefly.co.za/business-economy/money/254111-sarb-raises-repo-rate-725-what-means-bills-sa/",
+      publisher: "Briefly News",
+      date: "24 September 2026"
+    },
     wltpReg: {
       title: "Commission Regulation (EU) 2017/1151 (WLTP): electric energy consumption is measured as energy recharged from the mains",
       url: "https://eur-lex.europa.eu/eli/reg/2017/1151/oj",
@@ -173,6 +179,10 @@ window.EV = (function () {
     suggest: { spec: 40, dash: 25 }
   };
 
+  /* Vehicle finance starting point: the prime lending rate. Banks price car loans around prime,
+     higher or lower depending on the buyer, so this is a start, not a quote. */
+  var finance = { prime: 10.75, since: "24 September 2026", source: "primeRate" };
+
   var routes = [
     { id: "jhb-dbn", label: "Joburg to Durban (N3)", km: 570, n3: true },
     { id: "jhb-pmb", label: "Joburg to Pietermaritzburg (N3)", km: 490, n3: true },
@@ -222,7 +232,16 @@ window.EV = (function () {
     fuelService: 7000,
     chargerCost: 15000,
     fuelRise: 5,
-    elecRise: 9
+    elecRise: 9,
+    // keep the current car, or finance an EV?
+    instalment: null,           // null = worked out from the finance below
+    finDeposit: 0,
+    finRate: 10.75,             // = prime, from 24 Sept 2026
+    finMonths: 72,
+    finBalloon: 0,
+    evIns: 0,
+    evServiceMonth: 0,
+    oldRepairsMonth: 800
   };
 
   var assumptions = [
@@ -242,6 +261,7 @@ window.EV = (function () {
     tariffs: tariffs,
     classes: classes,
     evScale: evScale,
+    finance: finance,
     highway: highway,
     routes: routes,
     n3Chargers: n3Chargers,

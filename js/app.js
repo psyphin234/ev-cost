@@ -86,7 +86,7 @@
       if (saved && typeof saved === "object") {
         Object.keys(s).forEach(function (k) {
           if (k in saved && typeof saved[k] === typeof s[k]) s[k] = saved[k];
-          else if (k === "fuelPrice" && typeof saved[k] === "number") s[k] = saved[k];
+          else if ((k === "fuelPrice" || k === "instalment") && typeof saved[k] === "number") s[k] = saved[k];
         });
       }
     } catch (e) { /* storage blocked: use defaults */ }
@@ -240,20 +240,22 @@
     // number inputs: id = state key
     ["kmMonth", "fuelPrice", "lPer100", "kwhPer100", "lossPct", "homePrice", "acPrice", "dcPrice",
       "tripKm", "battery", "highwayPct", "startPct", "chargeToPct", "reservePct", "n3Price", "dcKw",
-      "evPrice", "fuelCarPrice", "chargerCost", "evService", "fuelService", "years", "fuelRise", "elecRise"
-    ].forEach(function (k) {
-      var input = $(k);
+      "evPrice", "fuelCarPrice", "chargerCost", "evService", "fuelService", "years", "fuelRise", "elecRise",
+      "instalment", "finPrice", "finDeposit", "finRate", "finMonths", "finBalloon", "oldRepairsMonth", "evServiceMonth", "evIns"
+    ].forEach(function (id) {
+      var input = $(id);
+      var k = id === "finPrice" ? "evPrice" : id; // the EV price box appears in two sections
       input.addEventListener("input", function () {
         var v = parseFloat(input.value.replace(",", "."));
         if (!isFinite(v)) {
-          if (k === "fuelPrice") state.fuelPrice = null;
+          if (k === "fuelPrice" || k === "instalment") state[k] = null;
           return;
         }
         state[k] = v;
         if (k === "homePrice") state.homeTariff = matchTariff(v);
         if (k === "lPer100" || k === "kwhPer100") state.sizeClass = "";
         if (k === "tripKm") state.route = "";
-        changed(k);
+        changed(id);
       });
       input.addEventListener("blur", function () {
         render();
@@ -354,6 +356,15 @@
     setInput("years", state.years);
     setInput("fuelRise", state.fuelRise);
     setInput("elecRise", state.elecRise);
+    setInput("instalment", instalmentValue());
+    setInput("finPrice", state.evPrice);
+    setInput("finDeposit", state.finDeposit);
+    setInput("finRate", state.finRate);
+    setInput("finMonths", state.finMonths);
+    setInput("finBalloon", state.finBalloon);
+    setInput("oldRepairsMonth", state.oldRepairsMonth);
+    setInput("evServiceMonth", state.evServiceMonth);
+    setInput("evIns", state.evIns);
     $("returnTrip").checked = !!state.returnTrip;
     ["mixHome", "mixAc", "mixDc"].forEach(function (k) {
       $(k).value = state[k];
@@ -373,6 +384,7 @@
     var run = C.running(s);
     renderRunning(s, run);
     renderTrip(s);
+    renderKeep(s, run);
     renderOwnership(s, run);
   }
 
@@ -684,6 +696,111 @@
   }
 
   /* ------------------------------------------------------------ 3. buying */
+  /* ------------------------------------------------------------ 3. keep or finance */
+  function workedInstalment() {
+    return Math.round(C.instalment(state.evPrice, state.finDeposit, state.finRate, state.finMonths, state.finBalloon));
+  }
+
+  function instalmentValue() {
+    return typeof state.instalment === "number" ? state.instalment : workedInstalment();
+  }
+
+  function renderKeep(s, run) {
+    var worked = workedInstalment();
+    var pay = instalmentValue();
+    var typed = typeof state.instalment === "number" && Math.abs(state.instalment - worked) >= 1;
+
+    var ih = clear($("instalment-hint"));
+    if (typed) {
+      ih.appendChild(document.createTextNode("Your figure. The finance below works out to " + rand(worked) + " a month. "));
+      var b = el("button", { type: "button", class: "link-button", text: "Use that" });
+      b.addEventListener("click", function () {
+        state.instalment = null;
+        changed();
+      });
+      ih.appendChild(b);
+    } else {
+      ih.textContent = "Worked out from the finance below. Got a quote from the bank or dealer? Type its instalment here instead.";
+    }
+    var fh = clear($("finance-hint"));
+    fh.appendChild(document.createTextNode("Prime is " + num(D.finance.prime, 2) + "% (since " + D.finance.since + "); your bank may offer more or less. A balloon lowers the instalment, but you owe it at the end. "));
+    fh.appendChild(sourceLink(D.finance.source));
+
+    var k = C.keepOrBuy(Object.assign({}, state, { instalment: pay }), run);
+    $("keep-total").textContent = rand(k.keep.total) + " /month";
+    $("keep-sub").textContent = rand(k.keep.energy) + " fuel + " + rand(k.keep.upkeep) + " servicing";
+    $("buy-total").textContent = rand(k.buy.total) + " /month";
+    $("buy-sub").textContent = rand(k.buy.instalment) + " instalment + " + rand(k.buy.energy) + " electricity" +
+      (k.buy.upkeep ? " + " + rand(k.buy.upkeep) + " servicing" : "") + (k.buy.insurance ? " + " + rand(k.buy.insurance) + " insurance" : "");
+
+    var hl = $("keep-headline");
+    var sv = $("keep-save");
+    if (k.buy.instalment <= 0) {
+      hl.textContent = "No instalment: the EV saves " + rand(k.saving) + " a month to run.";
+      sv.textContent = "";
+    } else if (k.difference <= 0) {
+      hl.textContent = "The savings pay for it: what you'd stop spending covers the whole instalment.";
+      sv.textContent = "You'd be " + rand(-k.difference) + " a month better off, even while paying the EV off.";
+      sv.className = "save save--good";
+    } else {
+      hl.textContent = k.saving > 0
+        ? "The savings cover " + pct(Math.min(1, k.covers)) + " of the instalment (" + rand(k.saving) + " of " + rand(k.buy.instalment) + ")."
+        : "The EV costs as much or more to run here, so nothing goes towards the instalment.";
+      sv.textContent = "Financing the EV would cost you " + rand(k.difference) + " a month more than keeping your car.";
+      sv.className = "save save--bad";
+    }
+
+    drawStack(k);
+
+    var facts = clear($("keep-facts"));
+    function fact(strong, rest) {
+      facts.appendChild(el("li", null, [el("strong", { text: strong }), " " + rest]));
+    }
+    if (k.saving > 0) {
+      fact("The savings would cover an instalment of up to " + rand(k.maxInstalment) + " a month,",
+        isFinite(k.maxPrice) ? "which on these finance terms buys a car of about " + rand(Math.round(k.maxPrice / 1000) * 1000) + "." : "");
+      if (k.kmToBreakEven != null && k.difference > 0) {
+        fact("Or you'd need to drive about " + num(Math.round(k.kmToBreakEven / 100) * 100) + " km a month", "(you put in " + num(state.kmMonth) + ") for the savings to cover it.");
+      }
+      fact("Once it's paid off, after " + yearsText(state.finMonths / 12) + ",", "the EV keeps saving you about " + rand(k.afterFinance) + " a month at today's prices.");
+    } else {
+      fact("Try charging at home:", "the EV's running cost depends most on where it charges (section 1).");
+    }
+    if (k.buy.instalment > 0) {
+      fact("Over the " + num(state.finMonths) + " months you'd pay " + rand(k.totalPaid) + " in instalments,",
+        (state.finBalloon > 0 ? "plus a " + rand(state.evPrice * state.finBalloon / 100) + " balloon at the end" : "") +
+        (state.finDeposit > 0 ? (state.finBalloon > 0 ? " and " : "on top of ") + "the " + rand(state.finDeposit) + " deposit." : (state.finBalloon > 0 ? "." : "with no deposit.")));
+    }
+  }
+
+  function drawStack(k) {
+    var box = clear($("keep-stack"));
+    var max = Math.max(k.keep.total, k.buy.total) || 1;
+    var parts = [
+      ["energy", "Fuel / electricity"],
+      ["upkeep", "Servicing"],
+      ["insurance", "Extra insurance"],
+      ["instalment", "Instalment"]
+    ];
+    [["Keep your car", k.keep], ["Finance the EV", k.buy]].forEach(function (row) {
+      var bar = el("div", { class: "stack-bar" });
+      parts.forEach(function (p) {
+        var v = row[1][p[0]];
+        if (v > 0) bar.appendChild(el("span", { class: "stack-seg stack-seg--" + p[0], style: "width:" + (v / max * 100) + "%", title: p[1] + " " + rand(v) }));
+      });
+      box.appendChild(el("div", { class: "stack-row" }, [
+        el("span", { class: "stack-label", text: row[0] }),
+        el("span", { class: "stack-track" }, [bar]),
+        el("span", { class: "stack-value", text: rand(row[1].total) })
+      ]));
+    });
+    var legend = el("div", { class: "legend stack-legend" });
+    parts.forEach(function (p) {
+      legend.appendChild(el("span", null, [el("i", { class: "sq stack-seg--" + p[0] }), " " + p[1]]));
+    });
+    box.appendChild(legend);
+  }
+
   function renderOwnership(s, run) {
     var o = C.ownership(s, run);
     var hl = $("buy-headline");
@@ -789,6 +906,7 @@
     item(ps, "Public AC: " + rand(D.tariffs.publicAc.value, true) + "/kWh.", D.tariffs.publicAc.note, D.tariffs.publicAc.source);
     item(ps, "Fast DC: " + rand(D.tariffs.publicDc.value, true) + "/kWh.", D.tariffs.publicDc.note, D.tariffs.publicDc.source);
     item(ps, "N3 fast charger: " + rand(D.tariffs.n3Dc.value, true) + "/kWh.", D.tariffs.n3Dc.note, D.tariffs.n3Dc.source);
+    item(ps, "Finance interest: " + num(D.finance.prime, 2) + "%,", "the prime lending rate since " + D.finance.since + ". Banks quote car loans around prime, higher or lower depending on the buyer.", D.finance.source);
     item(ps, "Car sizes, consumption, prices and servicing:", "examples to start from, not from a source. Type in your own.", null);
 
     var op = $("other-prices");

@@ -187,8 +187,63 @@ window.Calc = (function () {
     };
   }
 
+  /* Car finance: monthly instalment on price P with deposit D, yearly rate %, n months and a
+     balloon (% of the price, paid at the end). Ordinary amortisation, interest monthly. */
+  function instalment(price, deposit, ratePct, months, balloonPct) {
+    var n = Math.max(1, Math.round(months));
+    var r = Math.max(0, ratePct) / 100 / 12;
+    var balloon = price * Math.max(0, balloonPct) / 100;
+    var loan = Math.max(0, price - deposit);
+    if (loan <= 0) return 0;
+    if (r === 0) return Math.max(0, (loan - balloon) / n);
+    var f = Math.pow(1 + r, -n);
+    return Math.max(0, (loan - balloon * f) * r / (1 - f));
+  }
+
+  /* The inverse: the car price a given instalment pays for, on the same terms. */
+  function priceFor(pay, deposit, ratePct, months, balloonPct) {
+    var n = Math.max(1, Math.round(months));
+    var r = Math.max(0, ratePct) / 100 / 12;
+    var b = Math.max(0, balloonPct) / 100;
+    var f = r === 0 ? 1 : Math.pow(1 + r, -n);
+    var annuity = r === 0 ? n : (1 - f) / r;
+    var keep = 1 - b * f;
+    if (keep <= 0) return Infinity;
+    return (deposit + Math.max(0, pay) * annuity) / keep;
+  }
+
+  /* Keep the current (fuel) car, or finance an EV? Monthly cash out for each.
+     s: instalment, evIns (extra insurance a month), evServiceMonth, oldRepairsMonth,
+     kmMonth, finDeposit, finRate, finMonths, finBalloon; run = running(s) with the current car as the fuel car. */
+  function keepOrBuy(s, run) {
+    var keep = { energy: run.fuelMonth, upkeep: Math.max(0, s.oldRepairsMonth), instalment: 0, insurance: 0 };
+    var buy = { energy: run.evMonth, upkeep: Math.max(0, s.evServiceMonth), instalment: Math.max(0, s.instalment), insurance: Math.max(0, s.evIns) };
+    keep.total = keep.energy + keep.upkeep;
+    buy.total = buy.energy + buy.upkeep + buy.instalment + buy.insurance;
+    // what the switch saves before the instalment: fuel, repairs, less the EV's own running costs
+    var saving = keep.total - (buy.energy + buy.upkeep + buy.insurance);
+    var perKmSaving = run.fuelPerKm - run.evPerKm;
+    var fixedGap = buy.instalment + buy.upkeep + buy.insurance - keep.upkeep; // what the km must pay for
+    var r = {
+      keep: keep,
+      buy: buy,
+      difference: buy.total - keep.total, // > 0: the EV costs more a month
+      saving: saving,
+      covers: buy.instalment > 0 ? saving / buy.instalment : null,
+      maxInstalment: Math.max(0, saving),
+      maxPrice: priceFor(Math.max(0, saving), s.finDeposit, s.finRate, s.finMonths, s.finBalloon),
+      kmToBreakEven: perKmSaving > 0 ? Math.max(0, fixedGap) / perKmSaving : null,
+      afterFinance: saving, // once the instalments stop
+      totalPaid: buy.instalment * s.finMonths
+    };
+    return r;
+  }
+
   return {
     clamp: clamp,
+    instalment: instalment,
+    priceFor: priceFor,
+    keepOrBuy: keepOrBuy,
     evPer100: evPer100,
     normaliseMix: normaliseMix,
     mixPrice: mixPrice,

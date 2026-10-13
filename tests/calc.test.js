@@ -35,7 +35,7 @@
   test("every source referenced exists", () => {
     const refs = [D.fuelFallback.source, D.tariffs.publicAc.source, D.tariffs.publicDc.source, D.tariffs.n3Dc.source]
       .concat(D.tariffs.home.map((t) => t.source), D.tariffs.examples.map((t) => t.source),
-        D.n3Chargers.map((c) => c.source), D.assumptions.map((a) => a.source), [D.evScale.source]);
+        D.n3Chargers.map((c) => c.source), D.assumptions.map((a) => a.source), [D.evScale.source, D.finance.source]);
     refs.filter(Boolean).forEach((id) => {
       if (!D.sources[id]) throw new Error("unknown source " + id);
     });
@@ -165,6 +165,41 @@
     });
     const o = C.ownership(s, { fuelPerKm: 1, evPerKm: 1 });
     near(o.fuel[2] - o.fuel[1], 1320, 1e-9, "second year +10%");
+  });
+
+  // ------------------------------------------------------------ keep or finance
+  test("instalment: standard amortisation", () => {
+    near(C.instalment(100000, 0, 12, 12, 0), 8884.88, 0.01, "R100k, 12%, 12 months");
+    near(C.instalment(120000, 20000, 0, 10, 0), 10000, 1e-9, "no interest");
+    eq(C.instalment(100000, 100000, 12, 12, 0), 0, "fully paid deposit");
+    // a balloon of B paid at the end: instalment on the loan less B's present value
+    const withBalloon = C.instalment(100000, 0, 12, 12, 30);
+    near(withBalloon, (100000 - 30000 / Math.pow(1.01, 12)) * 0.01 / (1 - Math.pow(1.01, -12)), 1e-6, "balloon");
+  });
+
+  test("priceFor is the inverse of instalment", () => {
+    [[650000, 50000, 10.75, 72, 0], [400000, 0, 12, 60, 25], [300000, 30000, 0, 48, 10]].forEach((t) => {
+      const pay = C.instalment(t[0], t[1], t[2], t[3], t[4]);
+      near(C.priceFor(pay, t[1], t[2], t[3], t[4]), t[0], 0.01, "price " + t[0]);
+    });
+  });
+
+  test("keep or finance: totals, cover and break-even distance", () => {
+    const run = { fuelMonth: 3000, evMonth: 1000, fuelPerKm: 2, evPerKm: 2 / 3 };
+    const s = { instalment: 5000, evIns: 300, evServiceMonth: 0, oldRepairsMonth: 800, kmMonth: 1500,
+      finDeposit: 0, finRate: 10.75, finMonths: 72, finBalloon: 0 };
+    const k = C.keepOrBuy(s, run);
+    eq(k.keep.total, 3800, "keep");
+    eq(k.buy.total, 6300, "buy");
+    eq(k.difference, 2500, "difference");
+    eq(k.saving, 2500, "saving before the instalment: 3800 - 1300");
+    near(k.covers, 0.5, 1e-9, "covers half");
+    // at the break-even distance both totals match
+    const km = k.kmToBreakEven;
+    const keepAt = run.fuelPerKm * km + 800;
+    const buyAt = run.evPerKm * km + 5000 + 300;
+    near(keepAt, buyAt, 1e-6, "equal at " + km + " km");
+    near(C.instalment(k.maxPrice, 0, 10.75, 72, 0), k.maxInstalment, 0.01, "max price matches max instalment");
   });
 
   // ------------------------------------------------------------ report

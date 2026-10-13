@@ -1436,3 +1436,107 @@ svg .be-label {
     display: none;
   }
 }
+
+/* ------------------------------------------------------------ keep or finance: monthly stack */
+.stack {
+  display: grid;
+  gap: 10px;
+}
+
+.stack-row {
+  display: grid;
+  grid-template-columns: 112px minmax(0, 1fr) 72px;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.88rem;
+}
+
+.stack-label {
+  color: var(--text-muted);
+}
+
+.stack-track {
+  height: 18px;
+  background: var(--surface-2);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.stack-bar {
+  display: flex;
+  height: 100%;
+}
+
+.stack-seg {
+  height: 100%;
+  transition: width 0.3s ease;
+}
+
+.stack-seg + .stack-seg {
+  box-shadow: inset 2px 0 0 var(--surface);
+}
+
+.stack-seg--energy { background: var(--fuel); }
+.stack-row:nth-child(2) .stack-seg--energy { background: var(--ev); }
+.stack-seg--upkeep { background: #9aa4ae; }
+.stack-seg--insurance { background: #fbbf24; }
+.stack-seg--instalment { background: #c084fc; }
+
+.stack-value {
+  text-align: right;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.stack-legend {
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  margin-top: 2px;
+  font-size: 0.8rem;
+}
+
+.sq {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  vertical-align: -1px;
+}
+
+/* the legend's energy swatch is split: fuel / electricity */
+.sq.stack-seg--energy {
+  background: linear-gradient(to right, var(--fuel) 50%, var(--ev) 50%);
+}
+
+@media (max-width: 420px) {
+  .stack-row {
+    grid-template-columns: 92px minmax(0, 1fr) 64px;
+    gap: 8px;
+    font-size: 0.82rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stack-seg {
+    transition: none;
+  }
+}
+
+/* phones: rates like 10.75 need more room than the trip's percentages, so two per row */
+@media (max-width: 560px) {
+  .field-row--fin {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* phones: each bar gets the full width, its label above it */
+@media (max-width: 480px) {
+  .stack-row {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 4px 10px;
+  }
+
+  .stack-label {
+    grid-column: 1 / -1;
+  }
+}
