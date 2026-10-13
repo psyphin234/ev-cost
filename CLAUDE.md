@@ -2,7 +2,9 @@
 
 Static calculator comparing the cost of driving electric vs petrol/diesel in South Africa, part of the PsyPhin site. Started 2026-10-13 at the owner's request ("must be useful to current drivers and prospective buyers"; defaults filled in for a quick comparison, all changeable).
 
-**Address (planned): https://evcost.psyphin.co.za/** (the `CNAME` file here). Not deployed yet: needs a GitHub repo with Pages from `main` / root, the Afrihost CNAME `evcost` → `psyphin234.github.io`, then Enforce HTTPS, and a card in `projects.js` on psyphin.co.za (`kind: "tool"`), the same as the other tools.
+Repo `psyphin234/ev-cost` (public), GitHub Pages from `main` / root. Push to `main` to deploy; check with `gh api repos/psyphin234/ev-cost/pages/builds/latest`.
+
+**Address: https://evcost.psyphin.co.za/** since 2026-10-13 (the `CNAME` file here, plus the Afrihost CNAME `evcost.psyphin.co.za` → `psyphin234.github.io`). Card on psyphin.co.za (Tools, amber "In testing") since 2026-10-13; its image, `assets/img/projects/ev-cost.jpg` there, is a crop of this page's "Cost per 100 km" card at the default figures (900 px window, 2x) and is also this page's Open Graph image.
 
 Plain HTML/CSS/vanilla JS, classic scripts, no build step: `index.html` opens straight from disk. Inputs are kept in the visitor's `localStorage` (key `ev-cost-v1`).
 
