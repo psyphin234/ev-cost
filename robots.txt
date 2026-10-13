@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://evcost.psyphin.co.za/sitemap.xml
