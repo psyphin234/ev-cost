@@ -293,6 +293,7 @@
     });
 
     $("year").textContent = new Date().getFullYear();
+    buildHighwayWhy();
     buildSources();
   }
 
@@ -411,6 +412,7 @@
     }
 
     renderEvScale();
+    renderHighwayHint();
 
     $("figure-hint").textContent = state.figureFrom === "dash"
       ? "The trip computer shows what the battery gave, so the charging losses below are added to what you pay for."
@@ -458,6 +460,53 @@
         " the " + num(sc.average, 1) + " average). Real-world figures across all EVs run from " + num(sc.best.value, 1) + " (" + sc.best.car + ") to " + num(sc.worst.value, 1) + " (" + sc.worst.car + "). Expect more on the highway and in the cold. "));
       note.appendChild(sourceLink(sc.source));
     }
+  }
+
+  /* the highway extra: a suggestion that follows where the EV figure comes from, and the why */
+  function renderHighwayHint() {
+    var hw = D.highway;
+    var sug = hw.suggest[state.figureFrom === "dash" ? "dash" : "spec"];
+    var h = clear($("highway-hint"));
+    h.appendChild(document.createTextNode(state.figureFrom === "dash"
+      ? "Suggested " + sug + "% for a trip-computer figure from everyday driving. "
+      : "Suggested " + sug + "% for a spec-sheet (WLTP) figure. "));
+    if (Math.round(state.highwayPct) !== sug) {
+      var b = el("button", { type: "button", class: "link-button", text: "Use " + sug + "%" });
+      b.addEventListener("click", function () {
+        state.highwayPct = sug;
+        changed();
+      });
+      h.appendChild(b);
+      h.appendChild(document.createTextNode(" "));
+    }
+    h.appendChild(document.createTextNode("Add more for 120 km/h, a roof rack, a trailer or a headwind."));
+  }
+
+  function buildHighwayWhy() {
+    var hw = D.highway;
+    var body = $("highway-why-body");
+    function extra(a, b) {
+      return "+" + Math.round((a / b - 1) * 100) + "%";
+    }
+    body.appendChild(el("p", null, ["Mostly air drag. The force of the air on the car rises with the ", el("strong", { text: "square of speed" }), ", so at 120 km/h the car pushes against " + Math.round((Math.pow(120 / 100, 2) - 1) * 100) + "% more drag than at 100 km/h, and " + Math.round((Math.pow(120 / 110, 2) - 1) * 100) + "% more than at 110 km/h. ", sourceLink("dragEq")]));
+    body.appendChild(el("p", null, ["Fuel cars hide this: their engines waste a lot of energy in town and are at their most efficient cruising. EVs are the other way round. They waste little in town and get energy back when braking, so their spec-sheet figure (WLTP, mostly town and medium speeds) looks good and the highway shows a bigger jump."]));
+    body.appendChild(el("p", null, ["EV Database's real-world figures at a steady " + hw.speed + " km/h in mild weather (23\u00a0\u00b0C, no air-con), against each car's WLTP figure (from the battery) and its real mixed-driving figure, in Wh per km:"]));
+    var tb = el("tbody");
+    hw.cars.forEach(function (c) {
+      tb.appendChild(el("tr", null, [
+        el("th", { scope: "row" }, [el("a", { href: c.url, target: "_blank", rel: "noopener", text: c.car })]),
+        el("td", { class: "raw", text: String(c.wltp) }),
+        el("td", { class: "raw", text: String(c.combined) }),
+        el("td", { class: "raw", text: String(c.highway) }),
+        el("td", { text: extra(c.highway, c.wltp) }),
+        el("td", { text: extra(c.highway, c.combined) })
+      ]));
+    });
+    body.appendChild(el("div", { class: "table-wrap" }, [el("table", { class: "why-table" }, [
+      el("thead", null, [el("tr", null, ["Car", "WLTP", "Mixed", hw.speed + " km/h", "vs WLTP", "vs mixed"].map(function (t, i) { return el("th", { class: i >= 1 && i <= 3 ? "raw" : "", text: t }); }))]),
+      tb
+    ])]));
+    body.appendChild(el("p", null, ["So the suggestion is " + hw.suggest.spec + "% over a spec-sheet figure and " + hw.suggest.dash + "% over a trip-computer figure from everyday driving, both at " + hw.speed + " km/h. At \u221210\u00a0\u00b0C with the heater on, the same cars use roughly another quarter on top. ", sourceLink(hw.source)]));
   }
 
   /* ------------------------------------------------------------ 1. everyday */

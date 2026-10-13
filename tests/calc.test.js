@@ -52,6 +52,17 @@
     eq(D.defaults.acPrice, D.tariffs.publicAc.value, "ac");
   });
 
+  test("highway extra: default is the spec suggestion; the quoted ranges match the cars", () => {
+    eq(D.defaults.highwayPct, D.highway.suggest.spec, "default");
+    const vsW = D.highway.cars.map((c) => Math.round((c.highway / c.wltp - 1) * 100));
+    const vsC = D.highway.cars.map((c) => Math.round((c.highway / c.combined - 1) * 100));
+    eq(Math.min(...vsW) + "-" + Math.max(...vsW), "29-47", "vs WLTP range");
+    eq(Math.min(...vsC) + "-" + Math.max(...vsC), "23-29", "vs mixed range");
+    const med = (a) => a.slice().sort((x, y) => x - y)[Math.floor(a.length / 2)];
+    eq(Math.round(med(vsW) / 5) * 5, D.highway.suggest.spec, "spec suggestion = median");
+    eq(Math.round(med(vsC) / 5) * 5, D.highway.suggest.dash, "dash suggestion = median");
+  });
+
   // ------------------------------------------------------------ everyday
   test("fuel cost per 100 km = litres x price", () => {
     const r = C.running(Object.assign({}, base, { lPer100: 8, fuelPrice: 30 }));

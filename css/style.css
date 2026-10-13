@@ -1371,3 +1371,68 @@ svg .be-label {
   right: 0;
   transform: none;
 }
+
+/* "why" panels: folded explanations under a field */
+.why {
+  margin-top: 8px;
+  font-size: 0.85rem;
+}
+
+.why summary {
+  cursor: pointer;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.why-body {
+  margin-top: 6px;
+  padding: 10px 12px;
+  border-left: 2px solid var(--border);
+  color: var(--text-muted);
+}
+
+.why-body p {
+  margin: 0 0 8px;
+}
+
+.why-body strong {
+  color: var(--text);
+}
+
+.why-body a {
+  color: var(--text-muted);
+}
+
+.why-table {
+  width: 100%;
+  margin: 4px 0 10px;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.why-table th,
+.why-table td {
+  padding: 4px 6px;
+  border-bottom: 1px solid var(--border);
+  text-align: right;
+  white-space: nowrap;
+}
+
+.why-table th[scope="row"],
+.why-table thead th:first-child {
+  text-align: left;
+  white-space: normal;
+}
+
+.why-table thead th {
+  color: var(--text);
+  font-weight: 600;
+}
+
+/* phones: just the two percentages, so the table fits without scrolling */
+@media (max-width: 480px) {
+  .why-table .raw {
+    display: none;
+  }
+}

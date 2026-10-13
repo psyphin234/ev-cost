@@ -70,6 +70,17 @@ window.EV = (function () {
       publisher: "EV Database",
       date: "checked 13 October 2026"
     },
+    evdbCars: {
+      title: "Model pages: real energy consumption (city, highway at 110 km/h, combined) and WLTP figures",
+      url: "https://ev-database.org/",
+      publisher: "EV Database",
+      date: "checked 13 October 2026"
+    },
+    dragEq: {
+      title: "The Drag Equation",
+      url: "https://www.grc.nasa.gov/www/k-12/rocket/drageq.html",
+      publisher: "NASA Glenn Research Center"
+    },
     wltpReg: {
       title: "Commission Regulation (EU) 2017/1151 (WLTP): electric energy consumption is measured as energy recharged from the mains",
       url: "https://eur-lex.europa.eu/eli/reg/2017/1151/oj",
@@ -144,6 +155,24 @@ window.EV = (function () {
     ]
   };
 
+  /* How much more an EV uses at a steady highway speed. EV Database's model pages give
+     "Highway - Mild Weather" (constant 110 km/h, 23 C, no A/C) and "Combined - Mild Weather"
+     real-world figures, and the WLTP "Vehicle Consumption" (battery side, without charging losses),
+     all in Wh/km. The BMW's WLTP figure is its TEL (lowest-energy spec) value. */
+  var highway = {
+    speed: 110,
+    source: "evdbCars",
+    cars: [
+      { car: "Tesla Model 3 RWD", url: "https://ev-database.org/car/3740/Tesla-Model-3-RWD", wltp: 105, combined: 110, highway: 135 },
+      { car: "BYD Dolphin Surf 30 kWh", url: "https://ev-database.org/car/3193/BYD-DOLPHIN-SURF-30-kWh-Active", wltp: 136, combined: 136, highway: 176 },
+      { car: "BYD Atto 3", url: "https://ev-database.org/car/1782/BYD-ATTO-3", wltp: 144, combined: 159, highway: 202 },
+      { car: "BMW iX1 eDrive20", url: "https://ev-database.org/car/3458/BMW-iX1-eDrive20", wltp: 126, combined: 142, highway: 176 },
+      { car: "Toyota Hilux Electric", url: "https://ev-database.org/car/3652/Toyota-Hilux-Electric-592-kWh", wltp: 210, combined: 240, highway: 309 }
+    ],
+    // suggested extra, from the middle of the cars above, rounded to 5%
+    suggest: { spec: 40, dash: 25 }
+  };
+
   var routes = [
     { id: "jhb-dbn", label: "Joburg to Durban (N3)", km: 570, n3: true },
     { id: "jhb-pmb", label: "Joburg to Pietermaritzburg (N3)", km: 490, n3: true },
@@ -183,7 +212,7 @@ window.EV = (function () {
     startPct: 100,
     reservePct: 10,
     chargeToPct: 80,
-    highwayPct: 20,
+    highwayPct: 40,             // = highway.suggest.spec
     dcKw: 60,
     // buying
     evPrice: 650000,
@@ -198,7 +227,7 @@ window.EV = (function () {
 
   var assumptions = [
     { id: "wltp", text: "Spec-sheet (WLTP) EV figures are measured at the wall socket, so they already include charging losses. A car's own trip computer shows what the battery delivered, so add 10 to 15% for losses when you use that figure.", source: "wltpReg" },
-    { id: "highway", text: "EVs use noticeably more energy at 120 km/h than in mixed driving (air drag rises with the square of speed), while fuel cars change less. The trip planner adds a percentage you can change; 20% is an example, not a published figure." },
+    { id: "highway", text: "EVs use noticeably more energy at highway speed: air drag rises with the square of speed. EV Database's real-world figures at a steady 110 km/h for five cars are 29 to 47% above their WLTP figures, and 23 to 29% above their real mixed-driving figures, so the trip planner suggests 40% and 25%. At 120 km/h drag is another 19% higher.", source: "evdbCars" },
     { id: "charge80", text: "Fast chargers slow down a lot above about 80%, so the trip planner charges to 80% at each stop by default. The charging time uses an average power you set, not the charger's maximum." },
     { id: "elecRise", text: "NERSA approved a 9.01% average increase for municipal customers from 1 July 2026, and 8.76% for Eskom's direct customers from 1 April 2026. The yearly rises in the ownership view are your choice; these are this year's.", source: "enerdataMunicipal" },
     { id: "diesel", text: "Diesel's price is the regulated wholesale price; filling stations set their own diesel pump price, usually a little higher." },
@@ -213,6 +242,7 @@ window.EV = (function () {
     tariffs: tariffs,
     classes: classes,
     evScale: evScale,
+    highway: highway,
     routes: routes,
     n3Chargers: n3Chargers,
     defaults: defaults,
