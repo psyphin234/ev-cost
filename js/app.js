@@ -69,6 +69,14 @@
   }
 
   function sourceLink(id) {
+    if (Array.isArray(id)) {
+      var span = el("span");
+      id.forEach(function (one, i) {
+        if (i) span.appendChild(document.createTextNode(" · "));
+        span.appendChild(sourceLink(one));
+      });
+      return span;
+    }
     var s = D.sources[id];
     if (!s) return null;
     return el("a", { href: s.url, target: "_blank", rel: "noopener", text: s.publisher + " ↗" });
@@ -428,7 +436,7 @@
 
     $("figure-hint").textContent = state.figureFrom === "dash"
       ? "The trip computer shows what the battery gave, so the charging losses below are added to what you pay for."
-      : "Spec-sheet (WLTP) figures are measured at the wall, so they already include charging losses: nothing extra is added to the bill.";
+      : "Spec-sheet (WLTP) figures are measured at the wall, so they already include charging losses: nothing extra is added to the bill. They're optimistic for real driving, though: " + realWorldText() + ".";
 
     var t = D.tariffs.home.filter(function (x) { return x.id === state.homeTariff; })[0];
     var hh = clear($("home-hint"));
@@ -436,7 +444,7 @@
       hh.appendChild(document.createTextNode(t.note + " "));
       if (t.source) hh.appendChild(sourceLink(t.source));
     } else {
-      hh.textContent = "Your price. Divide your last bill's electricity charge by its kWh, including VAT.";
+      hh.textContent = "Your price. Use your bill's price per kWh including VAT, and on a block tariff the price of your highest block: that's what the EV's extra kWh cost. Leave out fixed monthly charges: you pay them anyway.";
     }
 
     var mix = C.normaliseMix(state.mixHome, state.mixAc, state.mixDc);
@@ -444,6 +452,13 @@
     [["home", "mix-seg--home"], ["ac", "mix-seg--ac"], ["dc", "mix-seg--dc"]].forEach(function (m) {
       if (mix[m[0]] > 0) bar.appendChild(el("span", { class: "mix-seg " + m[1], style: "flex-grow:" + mix[m[0]] }));
     });
+  }
+
+  /* how far real mixed driving is above WLTP, from the trip planner's cars */
+  function realWorldText() {
+    var ex = D.highway.cars.map(function (c) { return Math.round((c.combined / c.wltp - 1) * 100); }).sort(function (a, b) { return a - b; });
+    var mid = ex[Math.floor(ex.length / 2)];
+    return "real mixed driving is " + ex[0] + " to " + ex[ex.length - 1] + "% higher for five cars on EV Database (about " + Math.round(mid / 5) * 5 + "% in the middle), so add about that for a fair comparison";
   }
 
   /* where this EV's consumption sits among all EVs: a scale from best to worst, the average marked */
@@ -698,7 +713,7 @@
   /* ------------------------------------------------------------ 3. buying */
   /* ------------------------------------------------------------ 3. keep or finance */
   function workedInstalment() {
-    return Math.round(C.instalment(state.evPrice, state.finDeposit, state.finRate, state.finMonths, state.finBalloon));
+    return Math.round(C.instalment(state.evPrice, state.finDeposit, state.finRate, state.finMonths, state.finBalloon, D.finance.fees));
   }
 
   function instalmentValue() {
@@ -723,10 +738,13 @@
       ih.textContent = "Worked out from the finance below. Got a quote from the bank or dealer? Type its instalment here instead.";
     }
     var fh = clear($("finance-hint"));
-    fh.appendChild(document.createTextNode("Prime is " + num(D.finance.prime, 2) + "% (since " + D.finance.since + "); your bank may offer more or less. A balloon lowers the instalment, but you owe it at the end. "));
+    fh.appendChild(document.createTextNode("Prime is " + num(D.finance.prime, 2) + "% (since " + D.finance.since + "); your bank may offer more or less. "));
     fh.appendChild(sourceLink(D.finance.source));
+    fh.appendChild(document.createTextNode(" Includes the bank's " + rand(D.finance.fees.monthly) + " monthly fee and " + rand(D.finance.fees.initiation, true) + " initiation fee. "));
+    fh.appendChild(sourceLink(D.finance.fees.source));
+    fh.appendChild(document.createTextNode(" A balloon lowers the instalment, but you owe it at the end."));
 
-    var k = C.keepOrBuy(Object.assign({}, state, { instalment: pay }), run);
+    var k = C.keepOrBuy(Object.assign({}, state, { instalment: pay, finFees: D.finance.fees }), run);
     $("keep-total").textContent = rand(k.keep.total) + " /month";
     $("keep-sub").textContent = rand(k.keep.energy) + " fuel + " + rand(k.keep.upkeep) + " servicing";
     $("buy-total").textContent = rand(k.buy.total) + " /month";
@@ -756,20 +774,24 @@
     function fact(strong, rest) {
       facts.appendChild(el("li", null, [el("strong", { text: strong }), " " + rest]));
     }
+    if (k.buy.instalment > 0 && !(state.evIns > 0)) {
+      fact("Insurance isn't counted yet:", "a bank requires comprehensive cover on a car it finances, and a new car costs more to insure. Get a quote and enter the extra over what you pay now.");
+    }
     if (k.saving > 0) {
       fact("The savings would cover an instalment of up to " + rand(k.maxInstalment) + " a month,",
         isFinite(k.maxPrice) ? "which on these finance terms buys a car of about " + rand(Math.round(k.maxPrice / 1000) * 1000) + "." : "");
       if (k.kmToBreakEven != null && k.difference > 0) {
         fact("Or you'd need to drive about " + num(Math.round(k.kmToBreakEven / 100) * 100) + " km a month", "(you put in " + num(state.kmMonth) + ") for the savings to cover it.");
       }
-      fact("Once it's paid off, after " + yearsText(state.finMonths / 12) + ",", "the EV keeps saving you about " + rand(k.afterFinance) + " a month at today's prices.");
+      fact("Once the instalments end, after " + yearsText(state.finMonths / 12) + ",", "the EV keeps saving you about " + rand(k.afterFinance) + " a month at today's prices" + (k.balloon > 0 ? ", once the balloon is paid." : "."));
     } else {
       fact("Try charging at home:", "the EV's running cost depends most on where it charges (section 1).");
     }
     if (k.buy.instalment > 0) {
       fact("Over the " + num(state.finMonths) + " months you'd pay " + rand(k.totalPaid) + " in instalments,",
         (state.finBalloon > 0 ? "plus a " + rand(state.evPrice * state.finBalloon / 100) + " balloon at the end" : "") +
-        (state.finDeposit > 0 ? (state.finBalloon > 0 ? " and " : "on top of ") + "the " + rand(state.finDeposit) + " deposit." : (state.finBalloon > 0 ? "." : "with no deposit.")));
+        (state.finDeposit > 0 ? (state.finBalloon > 0 ? " and " : "on top of ") + "the " + rand(state.finDeposit) + " deposit." : (state.finBalloon > 0 ? "." : "with no deposit.")) +
+        (k.costOfCredit > 0 ? " That's " + rand(k.costOfCredit) + " more than the car's price, in interest and fees." : ""));
     }
   }
 

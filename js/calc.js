@@ -188,20 +188,28 @@ window.Calc = (function () {
   }
 
   /* Car finance: monthly instalment on price P with deposit D, yearly rate %, n months and a
-     balloon (% of the price, paid at the end). Ordinary amortisation, interest monthly. */
-  function instalment(price, deposit, ratePct, months, balloonPct) {
+     balloon (% of the price, paid at the end). Ordinary amortisation, interest monthly.
+     fees (optional): { initiation: added to the loan, monthly: added to each instalment }. */
+  function feesOf(fees) {
+    return { initiation: fees ? Math.max(0, fees.initiation || 0) : 0, monthly: fees ? Math.max(0, fees.monthly || 0) : 0 };
+  }
+
+  function instalment(price, deposit, ratePct, months, balloonPct, fees) {
+    var fee = feesOf(fees);
     var n = Math.max(1, Math.round(months));
     var r = Math.max(0, ratePct) / 100 / 12;
     var balloon = price * Math.max(0, balloonPct) / 100;
     var loan = Math.max(0, price - deposit);
     if (loan <= 0) return 0;
-    if (r === 0) return Math.max(0, (loan - balloon) / n);
+    loan += fee.initiation;
+    if (r === 0) return Math.max(0, (loan - balloon) / n) + fee.monthly;
     var f = Math.pow(1 + r, -n);
-    return Math.max(0, (loan - balloon * f) * r / (1 - f));
+    return Math.max(0, (loan - balloon * f) * r / (1 - f)) + fee.monthly;
   }
 
   /* The inverse: the car price a given instalment pays for, on the same terms. */
-  function priceFor(pay, deposit, ratePct, months, balloonPct) {
+  function priceFor(pay, deposit, ratePct, months, balloonPct, fees) {
+    var fee = feesOf(fees);
     var n = Math.max(1, Math.round(months));
     var r = Math.max(0, ratePct) / 100 / 12;
     var b = Math.max(0, balloonPct) / 100;
@@ -209,12 +217,13 @@ window.Calc = (function () {
     var annuity = r === 0 ? n : (1 - f) / r;
     var keep = 1 - b * f;
     if (keep <= 0) return Infinity;
-    return (deposit + Math.max(0, pay) * annuity) / keep;
+    // too little to cover the fees: only what the deposit pays for
+    return Math.max(deposit, (deposit - fee.initiation + Math.max(0, pay - fee.monthly) * annuity) / keep);
   }
 
   /* Keep the current (fuel) car, or finance an EV? Monthly cash out for each.
      s: instalment, evIns (extra insurance a month), evServiceMonth, oldRepairsMonth,
-     kmMonth, finDeposit, finRate, finMonths, finBalloon; run = running(s) with the current car as the fuel car. */
+     kmMonth, evPrice, finDeposit, finRate, finMonths, finBalloon, finFees; run = running(s) with the current car as the fuel car. */
   function keepOrBuy(s, run) {
     var keep = { energy: run.fuelMonth, upkeep: Math.max(0, s.oldRepairsMonth), instalment: 0, insurance: 0 };
     var buy = { energy: run.evMonth, upkeep: Math.max(0, s.evServiceMonth), instalment: Math.max(0, s.instalment), insurance: Math.max(0, s.evIns) };
@@ -224,6 +233,7 @@ window.Calc = (function () {
     var saving = keep.total - (buy.energy + buy.upkeep + buy.insurance);
     var perKmSaving = run.fuelPerKm - run.evPerKm;
     var fixedGap = buy.instalment + buy.upkeep + buy.insurance - keep.upkeep; // what the km must pay for
+    var balloon = (s.evPrice || 0) * Math.max(0, s.finBalloon || 0) / 100;
     var r = {
       keep: keep,
       buy: buy,
@@ -231,11 +241,14 @@ window.Calc = (function () {
       saving: saving,
       covers: buy.instalment > 0 ? saving / buy.instalment : null,
       maxInstalment: Math.max(0, saving),
-      maxPrice: priceFor(Math.max(0, saving), s.finDeposit, s.finRate, s.finMonths, s.finBalloon),
+      maxPrice: priceFor(Math.max(0, saving), s.finDeposit, s.finRate, s.finMonths, s.finBalloon, s.finFees),
       kmToBreakEven: perKmSaving > 0 ? Math.max(0, fixedGap) / perKmSaving : null,
       afterFinance: saving, // once the instalments stop
-      totalPaid: buy.instalment * s.finMonths
+      totalPaid: buy.instalment * s.finMonths,
+      balloon: balloon
     };
+    // interest and fees: everything paid for the car beyond its price
+    r.costOfCredit = buy.instalment > 0 ? r.totalPaid + Math.max(0, s.finDeposit || 0) + balloon - (s.evPrice || 0) : 0;
     return r;
   }
 

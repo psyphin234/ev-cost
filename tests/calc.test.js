@@ -36,7 +36,8 @@
     const refs = [D.fuelFallback.source, D.tariffs.publicAc.source, D.tariffs.publicDc.source, D.tariffs.n3Dc.source]
       .concat(D.tariffs.home.map((t) => t.source), D.tariffs.examples.map((t) => t.source),
         D.n3Chargers.map((c) => c.source), D.assumptions.map((a) => a.source), [D.evScale.source, D.finance.source]);
-    refs.filter(Boolean).forEach((id) => {
+    refs.push(D.finance.fees.source);
+    refs.flat().filter(Boolean).forEach((id) => {
       if (!D.sources[id]) throw new Error("unknown source " + id);
     });
   });
@@ -177,11 +178,33 @@
     near(withBalloon, (100000 - 30000 / Math.pow(1.01, 12)) * 0.01 / (1 - Math.pow(1.01, -12)), 1e-6, "balloon");
   });
 
+  test("instalment: the bank's fees", () => {
+    const fees = D.finance.fees;
+    eq(fees.initiation, 1207.5, "initiation fee");
+    eq(fees.monthly, 69, "monthly fee");
+    // the initiation fee is financed with the car, the monthly fee added on top
+    near(C.instalment(100000, 0, 12, 12, 0, fees), C.instalment(101207.5, 0, 12, 12, 0) + 69, 1e-6, "fees");
+    eq(C.instalment(100000, 100000, 12, 12, 0, fees), 0, "no loan, no fees");
+    // the default car: R650 000 at prime over 72 months
+    near(C.instalment(650000, 0, 10.75, 72, 0, fees), 12380.91, 0.01, "default with fees");
+  });
+
   test("priceFor is the inverse of instalment", () => {
     [[650000, 50000, 10.75, 72, 0], [400000, 0, 12, 60, 25], [300000, 30000, 0, 48, 10]].forEach((t) => {
       const pay = C.instalment(t[0], t[1], t[2], t[3], t[4]);
       near(C.priceFor(pay, t[1], t[2], t[3], t[4]), t[0], 0.01, "price " + t[0]);
+      const payF = C.instalment(t[0], t[1], t[2], t[3], t[4], D.finance.fees);
+      near(C.priceFor(payF, t[1], t[2], t[3], t[4], D.finance.fees), t[0], 0.01, "price with fees " + t[0]);
     });
+    eq(C.priceFor(50, 20000, 10.75, 72, 0, D.finance.fees), 20000, "less than the monthly fee buys only the deposit");
+  });
+
+  test("spec-sheet vs real mixed driving: the quoted range matches the cars", () => {
+    const ex = D.highway.cars.map((c) => Math.round((c.combined / c.wltp - 1) * 100)).sort((a, b) => a - b);
+    eq(ex[0] + "-" + ex[ex.length - 1], "0-14", "range");
+    eq(Math.round(ex[Math.floor(ex.length / 2)] / 5) * 5, 10, "middle");
+    const a = D.assumptions.find((x) => x.id === "realWorld").text;
+    if (a.indexOf("0 to 14%") < 0 || a.indexOf("about 10%") < 0) throw new Error("assumption wording out of date");
   });
 
   test("keep or finance: totals, cover and break-even distance", () => {
@@ -200,6 +223,17 @@
     const buyAt = run.evPerKm * km + 5000 + 300;
     near(keepAt, buyAt, 1e-6, "equal at " + km + " km");
     near(C.instalment(k.maxPrice, 0, 10.75, 72, 0), k.maxInstalment, 0.01, "max price matches max instalment");
+  });
+
+  test("keep or finance: cost of credit = everything paid beyond the price", () => {
+    const run = { fuelMonth: 3000, evMonth: 1000, fuelPerKm: 2, evPerKm: 2 / 3 };
+    const s = { evPrice: 400000, evIns: 0, evServiceMonth: 0, oldRepairsMonth: 0, kmMonth: 1500,
+      finDeposit: 40000, finRate: 12, finMonths: 60, finBalloon: 25, finFees: D.finance.fees };
+    s.instalment = C.instalment(s.evPrice, s.finDeposit, s.finRate, s.finMonths, s.finBalloon, s.finFees);
+    const k = C.keepOrBuy(s, run);
+    eq(k.balloon, 100000, "balloon");
+    near(k.costOfCredit, s.instalment * 60 + 40000 + 100000 - 400000, 1e-6, "cost of credit");
+    if (!(k.costOfCredit > 69 * 60 + 1207.5)) throw new Error("cost of credit should exceed the fees alone");
   });
 
   // ------------------------------------------------------------ report

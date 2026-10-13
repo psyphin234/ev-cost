@@ -87,6 +87,30 @@ window.EV = (function () {
       publisher: "Briefly News",
       date: "24 September 2026"
     },
+    eskomTariffs: {
+      title: "Tariffs and Charges Booklet 2026/2027 (Homepower Standard, page 27; Homelight, page 30)",
+      url: "https://www.eskom.co.za/distribution/wp-content/uploads/2026/07/Eskom-Tariff-booklet_Final.pdf",
+      publisher: "Eskom",
+      date: "2026"
+    },
+    tshwaneTariffs: {
+      title: "Tshwane (Pretoria) electricity tariffs 2026/27, from NERSA's capture of approved tariffs",
+      url: "https://gridpulse.org.za/tariffs/tshwane",
+      publisher: "GridPulse ZA",
+      date: "checked 13 October 2026"
+    },
+    ethekwiniTariffs: {
+      title: "eThekwini electricity tariffs 2026: R4.17 per unit flat rate",
+      url: "https://energybee.co.za/news/ethekwini-electricity-tariffs-2026",
+      publisher: "EnergyBee",
+      date: "2026"
+    },
+    ncaFees: {
+      title: "Initiation fees are all the rage: the National Credit Act's maximum R1,207.50 initiation fee and R69 monthly service fee, charged by all the banks",
+      url: "https://www.timeslive.co.za/sunday-times-daily/opinion-and-analysis/2022-02-13-wendy-knowler--initiation-fees-are-all-the-rage--everyones-doing-it-must-you-too/",
+      publisher: "Sunday Times (Wendy Knowler)",
+      date: "13 February 2022"
+    },
     wltpReg: {
       title: "Commission Regulation (EU) 2017/1151 (WLTP): electric energy consumption is measured as energy recharged from the mains",
       url: "https://eur-lex.europa.eu/eli/reg/2017/1151/oj",
@@ -122,8 +146,8 @@ window.EV = (function () {
   /* Electricity and charging, R/kWh incl. VAT */
   var tariffs = {
     home: [
-      { id: "eskom", label: "Eskom Homepower 4", value: 3.56, source: "mybbCharging", note: "Eskom direct customers, as quoted in October 2026." },
-      { id: "metro", label: "Metro / municipal", value: 4.50, source: "mybbCharging", note: "Tshwane residential is R4 to R5 per kWh (MyBroadband, Oct 2026): this is the middle. Check your own bill: block tariffs cost more the more you use." },
+      { id: "eskom", label: "Eskom Homepower 4", value: 3.56, source: "eskomTariffs", note: "If Eskom bills you or sells your prepaid units, on the usual single-phase home supply: 355.56 c/kWh incl. VAT for 2026/27 (energy, network demand and ancillary charges). Its fixed daily charges aren't counted: you pay them with or without an EV. Eskom's Homelight 60A prepaid is R3.44." },
+      { id: "metro", label: "Metro / municipal", value: 4.50, source: ["tshwaneTariffs", "ethekwiniTariffs"], note: "If your municipality bills you, as most city and suburban homes are. Most metros charge more per kWh the more you use, and an EV's extra 200 to 400 kWh a month lands in your top block: Tshwane's run from R3.73 to R5.12 above 650 kWh a month, while eThekwini charges a flat R4.17. R4.50 is a middle figure: use your own top block's price." },
       { id: "solar", label: "Own solar surplus", value: 0, note: "Daytime charging from panels you already have. The panels aren't free, but the extra kWh is." }
     ],
     publicAc: { value: 5.88, source: "rubiconTariffs", note: "GridCars and Rubicon AC rate for their app's customers." },
@@ -181,7 +205,9 @@ window.EV = (function () {
 
   /* Vehicle finance starting point: the prime lending rate. Banks price car loans around prime,
      higher or lower depending on the buyer, so this is a start, not a quote. */
-  var finance = { prime: 10.75, since: "24 September 2026", source: "primeRate" };
+  var finance = { prime: 10.75, since: "25 September 2026", source: "primeRate",
+    // the bank's fees on a car loan: the National Credit Act maximums, which the banks charge as standard
+    fees: { initiation: 1207.50, monthly: 69, source: "ncaFees" } };
 
   var routes = [
     { id: "jhb-dbn", label: "Joburg to Durban (N3)", km: 570, n3: true },
@@ -236,7 +262,7 @@ window.EV = (function () {
     // keep the current car, or finance an EV?
     instalment: null,           // null = worked out from the finance below
     finDeposit: 0,
-    finRate: 10.75,             // = prime, from 24 Sept 2026
+    finRate: 10.75,             // = prime, from 25 Sept 2026
     finMonths: 72,
     finBalloon: 0,
     evIns: 0,
@@ -247,9 +273,12 @@ window.EV = (function () {
   var assumptions = [
     { id: "wltp", text: "Spec-sheet (WLTP) EV figures are measured at the wall socket, so they already include charging losses. A car's own trip computer shows what the battery delivered, so add 10 to 15% for losses when you use that figure.", source: "wltpReg" },
     { id: "highway", text: "EVs use noticeably more energy at highway speed: air drag rises with the square of speed. EV Database's real-world figures at a steady 110 km/h for five cars are 29 to 47% above their WLTP figures, and 23 to 29% above their real mixed-driving figures, so the trip planner suggests 40% and 25%. At 120 km/h drag is another 19% higher.", source: "evdbCars" },
+    { id: "realWorld", text: "Spec-sheet figures are optimistic for everyday driving, for EVs as for fuel cars. EV Database's real mixed-driving figures for the same five cars are 0 to 14% above their WLTP figures (about 10% in the middle), so for a fair answer use real figures for both cars: a trip-computer average, or the spec figure plus about 10%.", source: "evdbCars" },
     { id: "charge80", text: "Fast chargers slow down a lot above about 80%, so the trip planner charges to 80% at each stop by default. The charging time uses an average power you set, not the charger's maximum." },
     { id: "elecRise", text: "NERSA approved a 9.01% average increase for municipal customers from 1 July 2026, and 8.76% for Eskom's direct customers from 1 April 2026. The yearly rises in the ownership view are your choice; these are this year's.", source: "enerdataMunicipal" },
     { id: "diesel", text: "Diesel's price is the regulated wholesale price; filling stations set their own diesel pump price, usually a little higher." },
+    { id: "finFees", text: "The worked-out instalment includes the bank's R69 monthly service fee and its R1 207.50 initiation fee, added to the loan: the most the National Credit Act allows, and what the banks charge as standard. A dealer's quote may add more (extras, warranties, credit life cover).", source: "ncaFees" },
+    { id: "insurance", text: "A bank requires comprehensive insurance on a car it finances, and a new car costs more to insure than an older one. It isn't in the worked figures: get a quote and enter the extra over what you pay now." },
     { id: "tolls", text: "Tolls, licence fees and parking are left out: they're about the same for both cars." }
   ];
 
