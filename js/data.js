@@ -64,6 +64,12 @@ window.EV = (function () {
       publisher: "Stuff South Africa",
       date: "17 March 2026"
     },
+    evDatabase: {
+      title: "Energy consumption of full electric vehicles cheatsheet",
+      url: "https://ev-database.org/cheatsheet/energy-consumption-electric-car",
+      publisher: "EV Database",
+      date: "checked 13 October 2026"
+    },
     wltpReg: {
       title: "Commission Regulation (EU) 2017/1151 (WLTP): electric energy consumption is measured as energy recharged from the mains",
       url: "https://eur-lex.europa.eu/eli/reg/2017/1151/oj",
@@ -121,6 +127,22 @@ window.EV = (function () {
     { id: "large", label: "Large SUV", fuel: "petrol95", lPer100: 10, kwhPer100: 21, battery: 80 },
     { id: "bakkie", label: "Double-cab bakkie", fuel: "diesel005", lPer100: 9, kwhPer100: 25, battery: 90 }
   ];
+
+  /* What's good or bad for an EV: EV Database's real-world figures across every EV it lists
+     ("Data is based on real-world values"; the average is corrected for multiple versions of a model).
+     The bands are this page's own grouping around that average, not from the source. */
+  var evScale = {
+    best: { value: 13.0, car: "Tesla Model 3 RWD" },
+    average: 18.9,
+    worst: { value: 29.4, car: "Mercedes-Benz G 580" },
+    source: "evDatabase",
+    bands: [
+      { upTo: 15, label: "very efficient", note: "small hatches and sleek sedans" },
+      { upTo: 20, label: "about average", note: "most compact SUVs and family cars" },
+      { upTo: 25, label: "thirsty", note: "big, heavy SUVs" },
+      { upTo: Infinity, label: "very thirsty", note: "large SUVs, bakkies and off-roaders" }
+    ]
+  };
 
   var routes = [
     { id: "jhb-dbn", label: "Joburg to Durban (N3)", km: 570, n3: true },
@@ -190,6 +212,7 @@ window.EV = (function () {
     fuels: fuels,
     tariffs: tariffs,
     classes: classes,
+    evScale: evScale,
     routes: routes,
     n3Chargers: n3Chargers,
     defaults: defaults,

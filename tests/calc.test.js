@@ -35,7 +35,7 @@
   test("every source referenced exists", () => {
     const refs = [D.fuelFallback.source, D.tariffs.publicAc.source, D.tariffs.publicDc.source, D.tariffs.n3Dc.source]
       .concat(D.tariffs.home.map((t) => t.source), D.tariffs.examples.map((t) => t.source),
-        D.n3Chargers.map((c) => c.source), D.assumptions.map((a) => a.source));
+        D.n3Chargers.map((c) => c.source), D.assumptions.map((a) => a.source), [D.evScale.source]);
     refs.filter(Boolean).forEach((id) => {
       if (!D.sources[id]) throw new Error("unknown source " + id);
     });

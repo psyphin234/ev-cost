@@ -1306,3 +1306,68 @@ svg .be-label {
     display: none;
   }
 }
+
+/* EV consumption scale: best to worst real-world figure, average marked, yours as a dot */
+.scale {
+  position: relative;
+  height: 40px;
+  margin: 12px 4px 0;
+}
+
+.scale-track {
+  position: relative;
+  height: 8px;
+  border-radius: 4px;
+  background: linear-gradient(to right, #4ade80 0%, #4ade80 18%, #fbbf24 55%, #f87171 85%);
+  opacity: 0.85;
+}
+
+.scale-tick {
+  position: absolute;
+  top: -3px;
+  width: 2px;
+  height: 14px;
+  margin-left: -1px;
+  background: var(--text-muted);
+}
+
+.scale-tick--1 {
+  background: var(--text);
+}
+
+.scale-you {
+  position: absolute;
+  top: 50%;
+  width: 16px;
+  height: 16px;
+  margin: -8px 0 0 -8px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 3px solid var(--bg);
+  box-shadow: 0 0 0 2px var(--accent);
+}
+
+.scale-label {
+  position: absolute;
+  top: 16px;
+  transform: translateX(-50%);
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+/* best and worst sit at the ends so they never run into the average's label */
+.scale-label--0 {
+  left: 0 !important;
+  transform: none;
+}
+
+.scale-label--1 {
+  color: var(--text);
+}
+
+.scale-label--2 {
+  left: auto !important;
+  right: 0;
+  transform: none;
+}

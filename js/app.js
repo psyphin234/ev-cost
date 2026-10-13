@@ -410,6 +410,8 @@
       h.textContent = "Today's official " + D.fuels[state.fuel].label + " " + regionLabel + (prices().live ? " (live)." : ".") + (state.fuel === "diesel005" ? " Diesel is the wholesale price; pumps charge a little more." : "");
     }
 
+    renderEvScale();
+
     $("figure-hint").textContent = state.figureFrom === "dash"
       ? "The trip computer shows what the battery gave, so the charging losses below are added to what you pay for."
       : "Spec-sheet (WLTP) figures are measured at the wall, so they already include charging losses: nothing extra is added to the bill.";
@@ -428,6 +430,34 @@
     [["home", "mix-seg--home"], ["ac", "mix-seg--ac"], ["dc", "mix-seg--dc"]].forEach(function (m) {
       if (mix[m[0]] > 0) bar.appendChild(el("span", { class: "mix-seg " + m[1], style: "flex-grow:" + mix[m[0]] }));
     });
+  }
+
+  /* where this EV's consumption sits among all EVs: a scale from best to worst, the average marked */
+  function renderEvScale() {
+    var sc = D.evScale;
+    var lo = 10;
+    var hi = 32;
+    var k = state.kwhPer100;
+    var at = function (v) { return Math.max(0, Math.min(100, (v - lo) / (hi - lo) * 100)) + "%"; };
+    var box = clear($("ev-scale"));
+    var track = el("div", { class: "scale-track" });
+    [[sc.best.value, "Best " + num(sc.best.value, 1)], [sc.average, "Average " + num(sc.average, 1)], [sc.worst.value, "Worst " + num(sc.worst.value, 1)]].forEach(function (m, i) {
+      track.appendChild(el("span", { class: "scale-tick scale-tick--" + i, style: "left:" + at(m[0]) }));
+      box.appendChild(el("span", { class: "scale-label scale-label--" + i, style: "left:" + at(m[0]), text: m[1] }));
+    });
+    if (k > 0) track.appendChild(el("span", { class: "scale-you", style: "left:" + at(k), title: "Yours" }));
+    box.insertBefore(track, box.firstChild);
+
+    var note = clear($("ev-scale-note"));
+    if (k > 0) {
+      var band = sc.bands.filter(function (b) { return k < b.upTo; })[0];
+      var diff = (k - sc.average) / sc.average;
+      note.appendChild(el("strong", { text: num(k, 1) + " kWh/100 km is " + band.label + " " }));
+      note.appendChild(document.createTextNode("(typical of " + band.note + "; " +
+        (Math.abs(diff) < 0.03 ? "right on" : pct(Math.abs(diff)) + (diff < 0 ? " below" : " above")) +
+        " the " + num(sc.average, 1) + " average). Real-world figures across all EVs run from " + num(sc.best.value, 1) + " (" + sc.best.car + ") to " + num(sc.worst.value, 1) + " (" + sc.worst.car + "). Expect more on the highway and in the cold. "));
+      note.appendChild(sourceLink(sc.source));
+    }
   }
 
   /* ------------------------------------------------------------ 1. everyday */
