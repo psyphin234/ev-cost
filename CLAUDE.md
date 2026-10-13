@@ -36,6 +36,10 @@ css/style.css  The winch/towing tools' base (header, pill, colours) + this tool'
 tests/         index.html + calc.test.js; run.ps1 runs them in headless Edge
 ```
 
+## Cache-busting
+
+GitHub Pages serves files with `max-age=600`, so after a deploy a browser can pair the new `index.html` with an old cached script (on 2026-10-13 that left the new highway "why" panel empty for the owner). `index.html` loads every CSS/JS file with `?v=<date><letter>`: **bump all four together whenever any of them changes.**
+
 ## Preview and test
 
 - Open `index.html` from disk, or `python -m http.server`.
