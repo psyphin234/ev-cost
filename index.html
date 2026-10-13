@@ -1,0 +1,446 @@
+<!doctype html>
+<html lang="en-ZA">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>EV vs Fuel Cost | PsyPhin</title>
+  <meta name="description" content="What it costs per kilometre to drive an electric car in South Africa compared with petrol or diesel: today's fuel price, home electricity, public and N3 fast chargers, a road-trip planner and a buyer's break-even.">
+  <meta name="robots" content="noindex">
+  <link rel="canonical" href="https://evcost.psyphin.co.za/">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://evcost.psyphin.co.za/">
+  <meta property="og:title" content="EV vs Fuel Cost">
+  <meta property="og:description" content="Electric vs petrol or diesel in South Africa: cost per km at today's fuel price, home electricity and public chargers, plus an N3 road-trip planner and a buyer's break-even.">
+  <meta name="theme-color" content="#020203">
+  <meta name="color-scheme" content="dark">
+  <link rel="icon" href="favicon.ico" sizes="48x48">
+  <link rel="icon" href="favicon-96x96.png" type="image/png" sizes="96x96">
+  <link rel="icon" href="favicon-192x192.png" type="image/png" sizes="192x192">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" sizes="180x180">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <div class="construction" role="alert">
+    <strong>New.</strong> Still being checked. Prices change monthly: check the figures against your own bill and charger app.
+  </div>
+
+  <header class="brand-bar">
+    <div class="brand-nav">
+      <a class="back-link" href="https://psyphin.co.za/#tools"><span class="back-link-arrow" aria-hidden="true">&larr;</span> <span class="back-link-label"><span class="back-link-more">More </span>PsyPhin tools</span> <span class="back-link-domain">psyphin.co.za</span></a>
+      <nav class="nav" aria-label="Site">
+        <a href="#running" aria-current="page">Calculator</a>
+        <a href="#trip">Road trip</a>
+        <a href="#sources">Sources</a>
+      </nav>
+    </div>
+    <div class="brand-inner">
+      <a class="brand-logo-link" href="https://psyphin.co.za/" aria-label="PsyPhin home"><img src="logo.jpg" alt="PsyPhin" class="brand-logo" width="560" height="501"></a>
+      <div class="brand-text">
+        <p class="brand-eyebrow">South Africa &middot; Electric vs petrol &amp; diesel</p>
+        <h1>EV vs Fuel Cost</h1>
+        <p class="subtitle">What it really costs per kilometre to drive electric versus petrol or diesel, at today's fuel price, your electricity tariff and what public chargers in town and on the N3 charge.</p>
+      </div>
+    </div>
+  </header>
+
+  <main id="main" class="wrap">
+    <section class="intro">
+      <p class="lede">Filled in with today's prices so you get an answer straight away. Change anything in a <span class="key-input">blue box</span> to match your car, your bill and how you'd charge.</p>
+      <p class="privacy">Worked out in your browser; nothing you type is sent anywhere. Your inputs are remembered on this device only. <button type="button" class="link-button" id="reset">Reset to defaults</button></p>
+      <p class="live-line" id="live-line" aria-live="polite">Fetching today's fuel price&hellip;</p>
+    </section>
+
+    <!-- ============================================================ everyday driving -->
+    <section class="block" id="running" aria-labelledby="running-title">
+      <h2 class="block-title" id="running-title"><span class="block-num">1</span> Everyday driving</h2>
+
+      <div class="calc-layout">
+        <form class="inputs" id="form" autocomplete="off" novalidate>
+          <fieldset>
+            <legend>Compare like with like</legend>
+            <div class="chips" id="class-chips" role="group" aria-label="Car size"></div>
+            <p class="hint">Sets both cars' consumption to an example for that size (not from a source). Type in your own cars' figures below.</p>
+          </fieldset>
+
+          <fieldset>
+            <legend>How far you drive</legend>
+            <div class="field">
+              <label for="kmMonth">Kilometres a month</label>
+              <div class="with-unit"><input id="kmMonth" type="number" inputmode="numeric" min="0" step="100"><span>km</span></div>
+              <p class="hint" id="km-year"></p>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend><span class="dot dot--fuel" aria-hidden="true"></span> Fuel car</legend>
+            <div class="chips chips--small" id="region-chips" role="group" aria-label="Where you fill up">
+              <button type="button" class="chip" data-region="inland">Inland (Gauteng)</button>
+              <button type="button" class="chip" data-region="coastal">Coastal</button>
+            </div>
+            <div class="chips chips--small" id="fuel-chips" role="group" aria-label="Fuel"></div>
+            <div class="field-row">
+              <div class="field">
+                <label for="fuelPrice">Fuel price</label>
+                <div class="with-unit"><span class="unit-before">R</span><input id="fuelPrice" type="number" inputmode="decimal" min="0" step="0.01"><span>/ litre</span></div>
+                <p class="hint" id="fuel-price-hint"></p>
+              </div>
+              <div class="field">
+                <label for="lPer100">Consumption</label>
+                <div class="with-unit"><input id="lPer100" type="number" inputmode="decimal" min="0" step="0.1"><span>l / 100 km</span></div>
+                <p class="hint">Your real figure, not the brochure's: brochure figures are usually optimistic.</p>
+              </div>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend><span class="dot dot--ev" aria-hidden="true"></span> Electric car</legend>
+            <div class="field">
+              <label for="kwhPer100">Consumption</label>
+              <div class="with-unit"><input id="kwhPer100" type="number" inputmode="decimal" min="0" step="0.1"><span>kWh / 100 km</span></div>
+            </div>
+            <div class="field">
+              <span class="label" id="figure-from-label">Where's that figure from?</span>
+              <div class="chips chips--small" role="group" aria-labelledby="figure-from-label">
+                <button type="button" class="chip" data-figure="spec">Spec sheet (WLTP)</button>
+                <button type="button" class="chip" data-figure="dash">The car's trip computer</button>
+              </div>
+              <p class="hint" id="figure-hint"></p>
+            </div>
+            <div class="field field--narrow">
+              <label for="lossPct">Charging losses</label>
+              <div class="with-unit"><input id="lossPct" type="number" inputmode="decimal" min="0" max="40" step="1"><span>%</span></div>
+              <p class="hint">Energy lost between the wall and the battery. 10% is a typical example; it's often more on a slow 10 A plug.</p>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>What electricity costs you</legend>
+            <div class="field">
+              <label for="homePrice">At home</label>
+              <div class="chips chips--small" id="home-chips" role="group" aria-label="Home tariff examples"></div>
+              <div class="with-unit"><span class="unit-before">R</span><input id="homePrice" type="number" inputmode="decimal" min="0" step="0.01"><span>/ kWh</span></div>
+              <p class="hint" id="home-hint"></p>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label for="acPrice">Public AC (malls, offices)</label>
+                <div class="with-unit"><span class="unit-before">R</span><input id="acPrice" type="number" inputmode="decimal" min="0" step="0.01"><span>/ kWh</span></div>
+              </div>
+              <div class="field">
+                <label for="dcPrice">Fast DC in town</label>
+                <div class="with-unit"><span class="unit-before">R</span><input id="dcPrice" type="number" inputmode="decimal" min="0" step="0.01"><span>/ kWh</span></div>
+              </div>
+            </div>
+            <p class="hint">Filled in with GridCars' rates (R5.88 AC, R7.35 DC), the biggest public network. <a href="#sources">Other networks' prices</a>.</p>
+          </fieldset>
+
+          <fieldset>
+            <legend>Where you'd charge</legend>
+            <div class="chips chips--small" id="mix-chips" role="group" aria-label="Charging mix examples">
+              <button type="button" class="chip" data-mix="100,0,0">Always at home</button>
+              <button type="button" class="chip" data-mix="80,10,10">Mostly home</button>
+              <button type="button" class="chip" data-mix="0,40,60">No home charging</button>
+            </div>
+            <div class="mix">
+              <div class="mix-row">
+                <label for="mixHome">Home</label>
+                <input id="mixHome" type="range" min="0" max="100" step="5">
+                <output id="mixHome-out" for="mixHome"></output>
+              </div>
+              <div class="mix-row">
+                <label for="mixAc">Public AC</label>
+                <input id="mixAc" type="range" min="0" max="100" step="5">
+                <output id="mixAc-out" for="mixAc"></output>
+              </div>
+              <div class="mix-row">
+                <label for="mixDc">Fast DC</label>
+                <input id="mixDc" type="range" min="0" max="100" step="5">
+                <output id="mixDc-out" for="mixDc"></output>
+              </div>
+            </div>
+            <div class="mix-bar" id="mix-bar" aria-hidden="true"></div>
+            <p class="hint" id="mix-hint"></p>
+          </fieldset>
+        </form>
+
+        <div class="results" id="results" aria-live="polite">
+          <div class="result-card">
+            <p class="headline" id="headline"></p>
+            <div class="tiles">
+              <div class="tile tile--fuel">
+                <p class="tile-label" id="tile-fuel-label">Fuel car</p>
+                <p class="tile-value" id="tile-fuel-month"></p>
+                <p class="tile-sub" id="tile-fuel-sub"></p>
+              </div>
+              <div class="tile tile--ev">
+                <p class="tile-label">Electric car</p>
+                <p class="tile-value" id="tile-ev-month"></p>
+                <p class="tile-sub" id="tile-ev-sub"></p>
+              </div>
+            </div>
+            <p class="save" id="save"></p>
+          </div>
+
+          <div class="result-card">
+            <h3 class="card-title">Cost per 100 km</h3>
+            <div class="bars" id="bars"></div>
+          </div>
+
+          <div class="result-card">
+            <h3 class="card-title">Where it tips over</h3>
+            <ul class="facts" id="facts"></ul>
+          </div>
+
+          <div class="result-card" id="next-month" hidden>
+            <h3 class="card-title">Next month's fuel price</h3>
+            <p id="next-month-text"></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ road trip -->
+    <section class="block" id="trip" aria-labelledby="trip-title">
+      <h2 class="block-title" id="trip-title"><span class="block-num">2</span> Road trip</h2>
+      <p class="block-lede">A long highway drive is where the difference shrinks: EVs use more at 120 km/h and fast chargers cost about twice what home power does. Uses the cars from section 1.</p>
+
+      <div class="calc-layout">
+        <form class="inputs" id="trip-form" autocomplete="off" novalidate>
+          <fieldset>
+            <legend>Route</legend>
+            <div class="chips chips--small" id="route-chips" role="group" aria-label="Routes"></div>
+            <div class="field-row">
+              <div class="field">
+                <label for="tripKm">Distance</label>
+                <div class="with-unit"><input id="tripKm" type="number" inputmode="numeric" min="0" step="10"><span>km</span></div>
+              </div>
+              <div class="field field--check">
+                <label class="check"><input id="returnTrip" type="checkbox"> There and back</label>
+              </div>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>The EV on the trip</legend>
+            <div class="field-row field-row--end">
+              <div class="field">
+                <label for="battery">Usable battery</label>
+                <div class="with-unit"><input id="battery" type="number" inputmode="decimal" min="0" step="1"><span>kWh</span></div>
+              </div>
+              <div class="field">
+                <label for="highwayPct">Extra at highway speed</label>
+                <div class="with-unit"><input id="highwayPct" type="number" inputmode="numeric" min="0" max="100" step="5"><span>%</span></div>
+              </div>
+            </div>
+            <div class="field-row field-row--3 field-row--end">
+              <div class="field">
+                <label for="startPct">Leave with</label>
+                <div class="with-unit"><input id="startPct" type="number" inputmode="numeric" min="0" max="100" step="5"><span>%</span></div>
+              </div>
+              <div class="field">
+                <label for="chargeToPct">Charge to</label>
+                <div class="with-unit"><input id="chargeToPct" type="number" inputmode="numeric" min="0" max="100" step="5"><span>%</span></div>
+              </div>
+              <div class="field">
+                <label for="reservePct">Reserve</label>
+                <div class="with-unit"><input id="reservePct" type="number" inputmode="numeric" min="0" max="50" step="5"><span>%</span></div>
+              </div>
+            </div>
+            <div class="field-row field-row--end">
+              <div class="field">
+                <label for="n3Price">Highway fast charger</label>
+                <div class="with-unit"><span class="unit-before">R</span><input id="n3Price" type="number" inputmode="decimal" min="0" step="0.01"><span>/ kWh</span></div>
+              </div>
+              <div class="field">
+                <label for="dcKw">Average charging speed</label>
+                <div class="with-unit"><input id="dcKw" type="number" inputmode="numeric" min="1" step="5"><span>kW</span></div>
+              </div>
+            </div>
+            <p class="hint">The N3's CHARGE sites haven't published a price, so this starts at GridCars' R7.35. The average speed is well below a charger's rating: cars slow the charge as the battery fills.</p>
+          </fieldset>
+        </form>
+
+        <div class="results" id="trip-results" aria-live="polite">
+          <div class="result-card">
+            <p class="headline" id="trip-headline"></p>
+            <div class="tiles">
+              <div class="tile tile--fuel">
+                <p class="tile-label">Fuel car</p>
+                <p class="tile-value" id="trip-fuel"></p>
+                <p class="tile-sub" id="trip-fuel-sub"></p>
+              </div>
+              <div class="tile tile--ev">
+                <p class="tile-label">Electric car</p>
+                <p class="tile-value" id="trip-ev"></p>
+                <p class="tile-sub" id="trip-ev-sub"></p>
+              </div>
+            </div>
+            <p class="save" id="trip-save"></p>
+          </div>
+          <div class="result-card">
+            <h3 class="card-title">Battery along the way</h3>
+            <div class="trip-chart" id="trip-chart"></div>
+            <p class="hint" id="trip-chart-note"></p>
+          </div>
+          <div class="result-card" id="n3-card">
+            <h3 class="card-title">Fast chargers on the N3</h3>
+            <ul class="chargers" id="n3-list"></ul>
+            <p class="hint">Newest sites, opened May 2026; there are others at filling stations along the route. Check a live map such as <a href="https://www.plugshare.com/" rel="noopener" target="_blank">PlugShare&nbsp;&#8599;</a> or the operator's app for what's working before you leave, and have a backup stop in range.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ buying -->
+    <section class="block" id="buying" aria-labelledby="buying-title">
+      <h2 class="block-title" id="buying-title"><span class="block-num">3</span> Thinking of buying?</h2>
+      <p class="block-lede">An EV usually costs more to buy and less to run. This shows when (or whether) the running savings pay back the difference, using your driving and charging from section 1.</p>
+
+      <div class="calc-layout">
+        <form class="inputs" id="buy-form" autocomplete="off" novalidate>
+          <fieldset>
+            <legend>Prices</legend>
+            <div class="field-row">
+              <div class="field">
+                <label for="evPrice">Electric car</label>
+                <div class="with-unit"><span class="unit-before">R</span><input id="evPrice" type="number" inputmode="numeric" min="0" step="5000"></div>
+              </div>
+              <div class="field">
+                <label for="fuelCarPrice">The fuel car you'd buy instead</label>
+                <div class="with-unit"><span class="unit-before">R</span><input id="fuelCarPrice" type="number" inputmode="numeric" min="0" step="5000"></div>
+              </div>
+            </div>
+            <div class="field">
+              <label for="chargerCost">Home charger, installed</label>
+              <div class="with-unit"><span class="unit-before">R</span><input id="chargerCost" type="number" inputmode="numeric" min="0" step="1000"></div>
+              <p class="hint">Example figures: type in real quotes. Use 0 if you'll charge from a normal plug or won't charge at home.</p>
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend>Running</legend>
+            <div class="field-row">
+              <div class="field">
+                <label for="evService">EV servicing a year</label>
+                <div class="with-unit"><span class="unit-before">R</span><input id="evService" type="number" inputmode="numeric" min="0" step="500"></div>
+              </div>
+              <div class="field">
+                <label for="fuelService">Fuel car servicing a year</label>
+                <div class="with-unit"><span class="unit-before">R</span><input id="fuelService" type="number" inputmode="numeric" min="0" step="500"></div>
+              </div>
+            </div>
+            <p class="hint">Examples: EVs have no oil, filters, spark plugs or clutch to replace. A service plan in the price makes this 0 for those years.</p>
+            <div class="field-row field-row--3">
+              <div class="field">
+                <label for="years">Keep it for</label>
+                <div class="with-unit"><input id="years" type="number" inputmode="numeric" min="1" max="15" step="1"><span>years</span></div>
+              </div>
+              <div class="field">
+                <label for="fuelRise">Fuel rises</label>
+                <div class="with-unit"><input id="fuelRise" type="number" inputmode="decimal" min="-20" max="50" step="1"><span>% / yr</span></div>
+              </div>
+              <div class="field">
+                <label for="elecRise">Electricity rises</label>
+                <div class="with-unit"><input id="elecRise" type="number" inputmode="decimal" min="-20" max="50" step="1"><span>% / yr</span></div>
+              </div>
+            </div>
+            <p class="hint">Electricity went up 9.01% for municipal customers in July 2026. Insurance, finance and resale value aren't included: get quotes for both cars, they can swing the answer.</p>
+          </fieldset>
+        </form>
+
+        <div class="results" id="buy-results" aria-live="polite">
+          <div class="result-card">
+            <p class="headline" id="buy-headline"></p>
+            <div class="own-chart" id="own-chart"></div>
+            <div class="legend" aria-hidden="true"><span><i class="dot dot--fuel"></i> Fuel car</span><span><i class="dot dot--ev"></i> Electric car</span></div>
+          </div>
+          <div class="result-card">
+            <h3 class="card-title" id="own-table-title"></h3>
+            <div class="table-wrap">
+              <table class="own-table" id="own-table"></table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ good to know -->
+    <section class="block" id="know" aria-labelledby="know-title">
+      <h2 class="block-title" id="know-title"><span class="block-num">4</span> Good to know</h2>
+      <div class="know-grid">
+        <article class="know">
+          <h3>Where you charge decides everything</h3>
+          <p>At home an EV costs a fraction of petrol per km. On fast chargers only, the gap narrows a lot. If you can't charge at home or work, run the "No home charging" mix above before you buy.</p>
+        </article>
+        <article class="know">
+          <h3>Solar and time-of-use</h3>
+          <p>Charging in the day from your own panels, or overnight on a time-of-use tariff such as Eskom's Homeflex, can cut the home price a lot. Try R0 or your off-peak rate in the home box.</p>
+        </article>
+        <article class="know">
+          <h3>Speed costs EVs more</h3>
+          <p>Air drag rises with the square of speed. At 120 km/h an EV can use a lot more than its spec-sheet figure; slowing to 100 km/h can save a charging stop on a long trip.</p>
+        </article>
+        <article class="know">
+          <h3>Outages</h3>
+          <p>A home charger needs power when you plug in. If load shedding, load reduction or outages hit your area, plan charging around the schedule or charge from a battery and solar system.</p>
+        </article>
+        <article class="know">
+          <h3>Check the battery warranty</h3>
+          <p>For a used EV especially: how many years and km it has left, and what capacity it guarantees. Ask for a battery health report before you buy.</p>
+        </article>
+        <article class="know">
+          <h3>Public charging needs apps</h3>
+          <p>Most networks need their own app or card and an account with money in it. Set them up before a trip, and check for idle fees if you stay plugged in after charging.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- ============================================================ sources -->
+    <section class="block" id="sources" aria-labelledby="sources-title">
+      <h2 class="block-title" id="sources-title">Where the numbers come from</h2>
+      <div class="sources-grid">
+        <div>
+          <h3 class="card-title">Default prices</h3>
+          <ul class="source-list" id="price-sources"></ul>
+          <h3 class="card-title">Other charging prices seen</h3>
+          <ul class="source-list" id="other-prices"></ul>
+        </div>
+        <div>
+          <h3 class="card-title">How it works out</h3>
+          <ul class="source-list" id="assumptions"></ul>
+        </div>
+      </div>
+      <h3 class="card-title">Sources</h3>
+      <ol class="refs" id="refs"></ol>
+      <p class="hint" id="checked"></p>
+    </section>
+
+    <aside class="disclaimer" id="disclaimer">
+      <h2>Disclaimer</h2>
+      <p>For information only: estimates from the figures shown, not a quote or financial advice. Fuel, electricity and charging prices change often and differ by area, network and site; consumption depends on the car, the load, the weather and how it's driven. Check prices with your municipality, Eskom and the charging operator before you rely on them.</p>
+    </aside>
+  </main>
+
+  <a class="quickbar" id="quickbar" href="#results" hidden aria-label="Jump to the results"><span class="q-fuel" id="q-fuel"></span><span class="q-ev" id="q-ev"></span><span class="q-save" id="q-save"></span></a>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <p>Fuel price from <a href="https://fuel.psyphin.co.za/">SA Fuel Price Preview</a>. <a href="#sources">Sources for every default</a>.</p>
+      <p>&copy; <span id="year"></span> PsyPhin</p>
+    </div>
+  </footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/calc.js"></script>
+  <script src="js/app.js"></script>
+
+  <!-- GoatCounter: cookie-free page-visit stats at https://psyphin.goatcounter.com/ (never sees form inputs) -->
+  <!-- Shared with psyphin.co.za: prefix paths with the host so this site's "/" is counted separately -->
+  <script>window.goatcounter = { path: function (p) { return location.host + p; } };</script>
+  <script data-goatcounter="https://psyphin.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>
