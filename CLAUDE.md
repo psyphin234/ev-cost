@@ -63,4 +63,7 @@ GitHub Pages serves files with `max-age=600`, so after a deploy a browser can pa
 
 ## Search (SEO)
 
+**Common questions** (since 2026-10-14): a `#faq` block of five `<details class="faq-item">` between Good to know and the sources, for the words people search. The text is static (it repeats Good to know) except the charging-price answer, which `buildSources()` fills from `D.tariffs`, so it follows price updates. To remove it, revert that commit (`git revert`; the tag `before-faq` marks the state before).
+
+
 Set up 2026-10-13, following the [Runbook: SEO for Small Sites & Tools](https://claude.ai/code/artifact/0e4d5503-7f20-4cb5-a25b-840f4caa3545). The `<title>` leads with the tool's name and adds the words people search for; the meta description is at most 155 characters (Google cuts the rest). The page has a `WebApplication` JSON-LD block (keep its description the same as the meta description). The fuel site's footer links here. `robots.txt` and `sitemap.xml` are at the site root: **update the sitemap's `lastmod` when a page's content changes.** Indexable since 2026-10-14 (the `noindex` meta tag was removed).

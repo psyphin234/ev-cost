@@ -1225,6 +1225,32 @@ svg .be-label {
   color: var(--text-muted);
 }
 
+/* ------------------------------------------------------------ common questions */
+.faq-list {
+  display: grid;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.faq-item {
+  padding: 12px 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.faq-item summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.faq-item p {
+  margin: 8px 0 0;
+  font-size: 0.92rem;
+  color: var(--text-muted);
+}
+
 /* ------------------------------------------------------------ sources */
 .sources-grid {
   display: grid;

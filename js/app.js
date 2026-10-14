@@ -950,6 +950,10 @@
       ]));
     });
     $("checked").textContent = "Prices checked " + longDate(D.checked) + ".";
+
+    // Common questions: today's charging prices, from the same tariffs the calculator uses
+    var home = D.tariffs.home.filter(function (t) { return t.value > 0; }).map(function (t) { return t.value; });
+    $("faq-charge-cost").textContent = "It depends on where you charge. At home, about " + rand(Math.min.apply(null, home), true) + " to " + rand(Math.max.apply(null, home), true) + " per kWh on an Eskom or municipal tariff (nothing extra from your own solar surplus). At public chargers, about " + rand(D.tariffs.publicAc.value, true) + " per kWh on AC and " + rand(D.tariffs.publicDc.value, true) + " on fast DC, the largest network's rates (prices checked " + longDate(D.checked) + "; they change, so check the operator's app). The sources are under “Where the numbers come from”.";
   }
 
   /* phones: show the bottom bar while the everyday inputs are on screen but its results aren't */
