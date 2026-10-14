@@ -8,7 +8,7 @@ Repo `psyphin234/ev-cost` (public), GitHub Pages from `main` / root. Push to `ma
 
 Plain HTML/CSS/vanilla JS, classic scripts, no build step: `index.html` opens straight from disk. Inputs are kept in the visitor's `localStorage` (key `ev-cost-v1`).
 
-**Status: finished** (owner, 2026-10-14). `noindex` removed 2026-10-14, so Google may list the page. The amber `.construction` banner stays until the owner says otherwise.
+**Status: finished** (owner, 2026-10-14). `noindex` removed 2026-10-14, so Google may list the page. The amber `.construction` banner was removed the same day (its CSS is kept); the psyphin.co.za card is green "Actively maintained".
 
 ## Prices
 
