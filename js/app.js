@@ -79,6 +79,7 @@
     }
     var s = D.sources[id];
     if (!s) return null;
+    if (!s.url) return el("span", { text: "(" + s.publisher + ")" });
     return el("a", { href: s.url, target: "_blank", rel: "noopener", text: s.publisher + " ↗" });
   }
 
@@ -96,6 +97,8 @@
           if (k in saved && typeof saved[k] === typeof s[k]) s[k] = saved[k];
           else if ((k === "fuelPrice" || k === "instalment") && typeof saved[k] === "number") s[k] = saved[k];
         });
+        // R7.35 was the N3 default (GridCars' rate) before CHARGE gave its own price
+        if (saved.n3Price === 7.35) s.n3Price = D.defaults.n3Price;
       }
     } catch (e) { /* storage blocked: use defaults */ }
     return s;
@@ -945,7 +948,7 @@
     Object.keys(D.sources).forEach(function (k) {
       var s = D.sources[k];
       refs.appendChild(el("li", null, [
-        el("a", { href: s.url, target: k === "fuelLive" ? "_self" : "_blank", rel: "noopener", text: s.title }),
+        s.url ? el("a", { href: s.url, target: k === "fuelLive" ? "_self" : "_blank", rel: "noopener", text: s.title }) : s.title,
         " · " + s.publisher + (s.date ? ", " + s.date : "")
       ]));
     });
@@ -953,7 +956,7 @@
 
     // Common questions: today's charging prices, from the same tariffs the calculator uses
     var home = D.tariffs.home.filter(function (t) { return t.value > 0; }).map(function (t) { return t.value; });
-    $("faq-charge-cost").textContent = "It depends on where you charge. At home, about " + rand(Math.min.apply(null, home), true) + " to " + rand(Math.max.apply(null, home), true) + " per kWh on an Eskom or municipal tariff (nothing extra from your own solar surplus). At public chargers, about " + rand(D.tariffs.publicAc.value, true) + " per kWh on AC and " + rand(D.tariffs.publicDc.value, true) + " on fast DC, the largest network's rates (prices checked " + longDate(D.checked) + "; they change, so check the operator's app). The sources are under “Where the numbers come from”.";
+    $("faq-charge-cost").textContent = "It depends on where you charge. At home, about " + rand(Math.min.apply(null, home), true) + " to " + rand(Math.max.apply(null, home), true) + " per kWh on an Eskom or municipal tariff (nothing extra from your own solar surplus). At public chargers, about " + rand(D.tariffs.publicAc.value, true) + " per kWh on AC and " + rand(D.tariffs.publicDc.value, true) + " on fast DC, the largest network's rates (prices checked " + longDate(D.checked) + "; they change, so check the operator's app). CHARGE's fast chargers on the N3 cost " + rand(D.tariffs.n3Dc.value, true) + " per kWh. The sources are under “Where the numbers come from”.";
   }
 
   /* phones: show the bottom bar while the everyday inputs are on screen but its results aren't */

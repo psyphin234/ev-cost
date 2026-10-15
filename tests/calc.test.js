@@ -51,6 +51,7 @@
     eq(D.defaults.tripKm, D.routes.find((r) => r.id === D.defaults.route).km, "route km");
     eq(D.defaults.dcPrice, D.tariffs.publicDc.value, "dc");
     eq(D.defaults.acPrice, D.tariffs.publicAc.value, "ac");
+    eq(D.defaults.n3Price, D.tariffs.n3Dc.value, "n3");
   });
 
   test("highway extra: default is the spec suggestion; the quoted ranges match the cars", () => {
