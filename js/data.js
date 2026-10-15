@@ -158,7 +158,8 @@ window.EV = (function () {
     ],
     publicAc: { value: 5.88, source: "rubiconTariffs", note: "GridCars and Rubicon AC rate for their app's customers." },
     publicDc: { value: 7.35, source: "mybbCharging", note: "GridCars DC rate, the largest network (MyBroadband Oct 2026; Engineering News June 2026 quotes the same)." },
-    n3Dc: { value: 9.15, source: "chargeTariff", note: "CHARGE's DC rate at its N3 sites (Reitz and Tugela), from CHARGE itself, October 2026. AC charging there is free until the end of May 2027." },    examples: [
+    n3Dc: { value: 9.15, source: "chargeTariff", note: "CHARGE's DC rate at its N3 sites (Reitz and Tugela), from CHARGE itself, October 2026. AC charging there is free until the end of May 2027." },
+    examples: [
       { label: "SAEV Charge DC, Cape Town (solar + battery site)", value: "R3.49, or R2.49 when its battery is full", source: "mybbCharging" },
       { label: "AIDC Eastern Cape network, from 1 July 2026", value: "R7.50 (was R7.00)", source: "topautoAidc" },
       { label: "Some branded dealer sites", value: "up to R11.76", source: "mybbCharging" }
