@@ -262,7 +262,14 @@ window.EV = (function () {
     years: 5,
     evService: 3000,
     fuelService: 7000,
-    chargerCost: 15000,
+    // charging kit: what comes with the car, and what the rest costs (example
+    // figures, not from a source). Only what isn't included is added.
+    wallboxIncluded: false,
+    chargerCost: 15000,         // the wall box, installed
+    portableIncluded: true,
+    portableCost: 8000,
+    v2lIncluded: true,
+    v2lCost: 5000,
     fuelRise: 5,
     elecRise: 9,
     // keep the current car, or finance an EV?

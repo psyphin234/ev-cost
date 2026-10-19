@@ -251,7 +251,7 @@
     // number inputs: id = state key
     ["kmMonth", "fuelPrice", "lPer100", "kwhPer100", "lossPct", "homePrice", "acPrice", "dcPrice",
       "tripKm", "battery", "highwayPct", "startPct", "chargeToPct", "reservePct", "n3Price", "dcKw",
-      "evPrice", "fuelCarPrice", "chargerCost", "evService", "fuelService", "years", "fuelRise", "elecRise",
+      "evPrice", "fuelCarPrice", "chargerCost", "portableCost", "v2lCost", "evService", "fuelService", "years", "fuelRise", "elecRise",
       "instalment", "finPrice", "finDeposit", "finRate", "finMonths", "finBalloon", "oldRepairsMonth", "evServiceMonth", "evIns"
     ].forEach(function (id) {
       var input = $(id);
@@ -276,6 +276,14 @@
     $("returnTrip").addEventListener("change", function () {
       state.returnTrip = $("returnTrip").checked;
       changed();
+    });
+
+    // charging kit: ticked = comes with the car
+    ["wallboxIncluded", "portableIncluded", "v2lIncluded"].forEach(function (id) {
+      $(id).addEventListener("change", function () {
+        state[id] = $(id).checked;
+        changed();
+      });
     });
 
     // the three mix sliders always add up to 100: moving one shares the rest between the others in proportion
@@ -340,7 +348,8 @@
 
   function render() {
     var fp = fuelPrice();
-    var s = Object.assign({}, state, { fuelPrice: fp });
+    // chargerCost here is the whole charging kit the buyer pays for
+    var s = Object.assign({}, state, { fuelPrice: fp, chargerCost: kitCost() });
 
     // inputs
     setInput("kmMonth", state.kmMonth);
@@ -362,6 +371,12 @@
     setInput("evPrice", state.evPrice);
     setInput("fuelCarPrice", state.fuelCarPrice);
     setInput("chargerCost", state.chargerCost);
+    setInput("portableCost", state.portableCost);
+    setInput("v2lCost", state.v2lCost);
+    [["wallboxIncluded", "wallbox-price"], ["portableIncluded", "portable-price"], ["v2lIncluded", "v2l-price"]].forEach(function (k) {
+      $(k[0]).checked = !!state[k[0]];
+      $(k[1]).hidden = !!state[k[0]];
+    });
     setInput("evService", state.evService);
     setInput("fuelService", state.fuelService);
     setInput("years", state.years);
@@ -397,6 +412,13 @@
     renderTrip(s);
     renderKeep(s, run);
     renderOwnership(s, run);
+  }
+
+  // the charging kit that doesn't come with the car
+  function kitCost() {
+    return (state.wallboxIncluded ? 0 : Math.max(0, state.chargerCost)) +
+      (state.portableIncluded ? 0 : Math.max(0, state.portableCost)) +
+      (state.v2lIncluded ? 0 : Math.max(0, state.v2lCost));
   }
 
   function renderLiveLine() {
@@ -589,6 +611,8 @@
         el("span", { class: "bar-value", text: rand(row.value) })
       ]));
     });
+    // the two cars racing 100 km (viz.js)
+    if (window.EVViz) EVViz.race($("race"), r.fuel100 > 0 && r.ev100 >= 0 ? { fuel100: r.fuel100, ev100: r.ev100, fuelLabel: fuelLabel } : null);
 
     // tipping points
     var facts = clear($("facts"));
@@ -678,8 +702,17 @@
   }
 
   function drawTrip(pts, tr) {
-    var box = clear($("trip-chart"));
-    if (!pts.length) return;
+    var box = $("trip-chart");
+    if (!pts.length) {
+      clear(box);
+      return;
+    }
+    // animated: the car driving the chart, the cost of each stop (viz.js)
+    if (window.EVViz) {
+      EVViz.trip(box, pts, tr, { battery: state.battery, lossPct: state.lossPct, n3Price: state.n3Price, dcKw: state.dcKw, reservePct: state.reservePct });
+      return;
+    }
+    clear(box);
     var W = Math.max(280, box.clientWidth || 520);
     var H = 190;
     var m = { l: 40, r: 14, t: 14, b: 30 };
@@ -772,6 +805,8 @@
     }
 
     drawStack(k);
+    // the saving poured into a jar the size of the instalment (viz.js)
+    if (window.EVViz) EVViz.jar($("keep-jar"), k.buy.instalment > 0 ? { instalment: k.buy.instalment, saving: k.saving } : null);
 
     var facts = clear($("keep-facts"));
     function fact(strong, rest) {
@@ -828,6 +863,11 @@
 
   function renderOwnership(s, run) {
     var o = C.ownership(s, run);
+    var missing = [["wallboxIncluded", "wall box"], ["portableIncluded", "portable charger"], ["v2lIncluded", "V2L cable"]]
+      .filter(function (k) { return !state[k[0]]; }).map(function (k) { return k[1]; });
+    $("kit-total").textContent = missing.length
+      ? "Adds " + rand(s.chargerCost) + " to the EV's cost in section 4 for the " + missing.join(", ").replace(/, ([^,]*)$/, " and $1") + "."
+      : "Everything comes with the car: nothing extra to add in section 4.";
     var hl = $("buy-headline");
     if (o.breakEven === 0) {
       hl.textContent = "The EV costs no more to buy here, and " + (o.difference >= 0 ? "it's " + rand(o.difference) + " cheaper after " + o.years + " years." : "still costs " + rand(-o.difference) + " more after " + o.years + " years.");
@@ -848,7 +888,7 @@
       tb.appendChild(el("tr", total ? { class: "total" } : null, [el("th", { scope: "row", text: label }), el("td", { text: rand(a) }), el("td", { text: rand(b) })]));
     }
     row("Buying", s.fuelCarPrice, s.evPrice);
-    row("Home charger", 0, s.chargerCost);
+    row("Charging kit", 0, s.chargerCost);
     row("Fuel / electricity", o.fuelEnergy, o.evEnergy);
     row("Servicing", s.fuelService * o.years, s.evService * o.years);
     row("Total", o.fuel[o.years], o.ev[o.years], true);
@@ -863,6 +903,11 @@
   }
 
   function drawOwnership(o) {
+    // animated: the lines drawn across, the break-even marked (viz.js)
+    if (window.EVViz) {
+      EVViz.payback($("own-chart"), o);
+      return;
+    }
     var box = clear($("own-chart"));
     var W = Math.max(280, box.clientWidth || 520);
     var H = 220;
@@ -979,6 +1024,7 @@
   }
 
   /* ------------------------------------------------------------ go */
+  if (window.EVViz) EVViz.format({ rand: rand, num: num, short: short, duration: duration, yearsText: yearsText });
   build();
   watchQuickbar();
   render();

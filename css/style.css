@@ -1,29 +1,34 @@
-/* EV vs Fuel Cost. Colours follow psyphin.co.za (css/style.css there);
-   the base is the SA Towing Check / Winch stylesheet, so the tools look the same. */
+/* EV vs Fuel Cost. Colours follow psyphin.co.za (css/style.css there): the navy
+   "deep space" look shared by every PsyPhin site since 2026-10-18. The base is
+   the SA Towing Check / Winch stylesheet, so the tools look the same. */
 :root {
-  --bg: #020203;
-  --surface: #111418;
-  --surface-2: #181c21;
-  --border: #262c33;
-  --text: #e6ebef;
-  --text-muted: #9aa4ae;
-  --accent: #3fb6ff;
-  --accent-strong: #1e8fff;
+  --bg: #040817;
+  --surface: #0b1330;
+  --surface-2: #101a3c;
+  --glass: rgba(11, 19, 48, 0.58);
+  --glass-2: rgba(16, 26, 60, 0.6);
+  --border: rgba(120, 170, 255, 0.16);
+  --text: #eaf2ff;
+  --text-muted: #a8b7d6;
+  --accent: #4cc9ff;
+  --accent-strong: #2f6bff;
+  --accent-glow: rgba(76, 201, 255, 0.35);
+  --violet: #7c5cff;
 
   /* anything the visitor can change: blue box, blue value, pencil (worked-out figures stay plain) */
   --input-bg: color-mix(in srgb, var(--accent) 12%, var(--surface-2));
   --input-border: color-mix(in srgb, var(--accent) 70%, var(--border));
-  --pencil: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%233fb6ff' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M11.2 2.3l2.5 2.5-8.4 8.4-3.2.7.7-3.2z'/%3E%3Cpath d='M9.6 3.9l2.5 2.5'/%3E%3C/svg%3E");
+  --pencil: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%234cc9ff' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M11.2 2.3l2.5 2.5-8.4 8.4-3.2.7.7-3.2z'/%3E%3Cpath d='M9.6 3.9l2.5 2.5'/%3E%3C/svg%3E");
 
   /* traffic light */
-  --pass: #4ade80;
-  --warn: #fbbf24;
-  --fail: #f87171;
-  --info: #3fb6ff;
-  --incomplete: #7b8590;
+  --pass: #2ee6a6;
+  --warn: #ffc857;
+  --fail: #ff5d73;
+  --info: #4cc9ff;
+  --incomplete: #7487ad;
 
   /* panel accents */
-  --legal: #3fb6ff;
+  --legal: #4cc9ff;
   --maker: #c084fc;
 
   /* chart series (validated for colour-blind separation on --surface-2) */
@@ -40,7 +45,7 @@
   --radius: 14px;
   --max-width: 1100px;
   --font-body: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  --font-display: "Rajdhani", "Segoe UI", system-ui, sans-serif;
+  --font-display: "Sora", "Inter", system-ui, sans-serif;
 }
 
 *,
@@ -62,18 +67,56 @@ body {
   font-size: 1rem;
   line-height: 1.55;
   -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
 }
 
-/* Circuit-trace pattern, the same on psyphin.co.za and every PsyPhin tool
-   (change them together). Fixed behind the whole page so it shows all
-   the way down. */
-body::before {
+/* Fixed layers behind the whole page, the same on every PsyPhin site (change them
+   together): a glowing circuit board and slow-drifting pools of blue and violet
+   light. js/circuit.js (identical on every site) draws the circuit on two canvases
+   (.circuit-fx) and adds .fx-circuit to <html>, which hides the static fallback
+   tile in body::before. Here (as on the towing checker, owner's request 2026-10-19) both are dimmer
+   than on the other sites and still: the page sets <html data-circuit="still">, so
+   circuit.js draws the board once with no pulses, and the light doesn't drift,
+   so nothing moves behind the text. */
+body::before,
+body::after {
   content: "";
   position: fixed;
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' fill='none'%3E%3Cg stroke='%233fb6ff' stroke-opacity='0.136' stroke-width='1'%3E%3Cpath d='M0 40h46l18 18h44M108 58v42l18 18h54M24 180v-44l18-18h34M180 22h-34L124 0M76 118v-20l-14-14H0M146 180v-26l12-12h22'/%3E%3C/g%3E%3Cg fill='%233fb6ff' fill-opacity='0.256'%3E%3Ccircle cx='108' cy='58' r='2.2'/%3E%3Ccircle cx='76' cy='118' r='2.2'/%3E%3Ccircle cx='146' cy='22' r='2.2'/%3E%3Ccircle cx='146' cy='154' r='2.2'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+body::before {
+  opacity: 0.5;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' fill='none'%3E%3Cfilter id='g' filterUnits='userSpaceOnUse' x='-20' y='-20' width='220' height='220'%3E%3CfeGaussianBlur stdDeviation='1.8' result='b'/%3E%3CfeMerge%3E%3CfeMergeNode in='b'/%3E%3CfeMergeNode in='SourceGraphic'/%3E%3C/feMerge%3E%3C/filter%3E%3Cg filter='url(%23g)'%3E%3Cg stroke='%233fb6ff' stroke-opacity='0.18' stroke-width='1.1'%3E%3Cpath d='M0 40h46l18 18h44M108 58v42l18 18h54M24 180v-44l18-18h34M180 22h-34L124 0M76 118v-20l-14-14H0M146 180v-26l12-12h22'/%3E%3C/g%3E%3Cg stroke='%235cc8ff' stroke-opacity='0.38'%3E%3Ccircle cx='108' cy='58' r='2.6'/%3E%3Ccircle cx='76' cy='118' r='2.6'/%3E%3Ccircle cx='146' cy='22' r='2.6'/%3E%3Ccircle cx='146' cy='154' r='2.6'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+.fx-circuit body::before {
+  display: none;
+}
+
+body::after {
+  z-index: -2;
+  inset: -20%;
+  background:
+    radial-gradient(38% 32% at 82% 8%, rgba(47, 107, 255, 0.18), transparent 70%),
+    radial-gradient(30% 28% at 10% 40%, rgba(124, 92, 255, 0.1), transparent 70%),
+    radial-gradient(34% 30% at 70% 85%, rgba(0, 180, 255, 0.07), transparent 70%);
+}
+
+.circuit-fx {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+::selection {
+  background: rgba(76, 201, 255, 0.35);
+  color: #fff;
 }
 
 a {
@@ -335,23 +378,52 @@ h3 {
 
 
 /* ------------------------------------------------------------ header
-   The same header as fuel.psyphin.co.za (.brand-bar in its style.css):
-   black band with a blue glow, the PsyPhin logo, a blue eyebrow, the title
-   and a one-line description. Keep the three in step. */
+   The same header as fuel.psyphin.co.za (.brand-bar in its style.css): navy
+   band with blue/violet glow and a glowing bottom edge, the PsyPhin logo, a cyan
+   eyebrow, the title and a one-line description. Here js/fx.js draws the engine
+   vs motor animation on canvas.hero-fx behind it. Keep the sites in step. */
 .brand-bar {
   position: relative;
+  overflow: hidden;
+  isolation: isolate;
   background:
-    radial-gradient(ellipse 60% 120% at 100% 0%, rgba(61, 155, 255, 0.18), transparent 60%),
-    #000000;
+    radial-gradient(ellipse 55% 90% at 82% 40%, rgba(47, 107, 255, 0.22), transparent 65%),
+    radial-gradient(ellipse 40% 70% at 0% 0%, rgba(124, 92, 255, 0.14), transparent 60%),
+    linear-gradient(180deg, #030614, rgba(3, 6, 20, 0.72));
   color: #ffffff;
-  border-bottom: 1px solid rgba(61, 155, 255, 0.35);
   padding-top: env(safe-area-inset-top, 0px);
+}
+
+/* Glowing line along the bottom edge, with a spark running along it. */
+.brand-bar::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background:
+    linear-gradient(90deg, transparent 0 40%, rgba(255, 255, 255, 0.95) 50%, transparent 60% 100%) no-repeat,
+    linear-gradient(90deg, transparent, rgba(76, 201, 255, 0.7) 30%, rgba(124, 92, 255, 0.7) 70%, transparent);
+  background-size: 30% 100%, 100% 100%;
+  background-position: -40% 0, 0 0;
+  box-shadow: 0 0 14px rgba(76, 201, 255, 0.55);
+}
+
+.hero-fx {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  width: 100%;
+  height: 100%;
+  display: block;
+  pointer-events: none;
 }
 
 .brand-nav {
   max-width: 1120px;
   margin: 0 auto;
-  padding: 12px 20px 0;
+  padding: 14px 20px 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -369,6 +441,17 @@ h3 {
   gap: 20px 28px;
 }
 
+/* A taller header with room on the right for the engine vs motor animation. */
+.brand-bar--hero .brand-inner {
+  min-height: 330px;
+  padding-top: 28px;
+  padding-bottom: 48px;
+}
+
+.brand-bar--hero .brand-text {
+  flex: 0 1 560px;
+}
+
 .brand-logo-link {
   flex-shrink: 0;
   display: block;
@@ -376,14 +459,16 @@ h3 {
 }
 
 .brand-logo-link:focus-visible {
-  outline: 2px solid #3d9bff;
+  outline: 2px solid var(--accent);
   outline-offset: 3px;
 }
 
+/* The logo sits on black; "lighten" drops the black so it floats on the navy. */
 .brand-logo {
   width: 168px;
   height: auto;
   display: block;
+  mix-blend-mode: lighten;
 }
 
 .brand-text {
@@ -391,30 +476,56 @@ h3 {
   min-width: 0;
 }
 
+.brand-text > * {
+  animation: rise 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.brand-text > :nth-child(2) { animation-delay: 0.08s; }
+.brand-text > :nth-child(3) { animation-delay: 0.16s; }
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(14px); }
+}
+
 .brand-eyebrow {
-  margin: 0 0 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 10px;
   font-family: var(--font-body);
   font-size: 12px;
   font-weight: 600;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: #3d9bff;
+  color: var(--accent);
+}
+
+.brand-eyebrow::before {
+  content: "";
+  width: 28px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent));
+  box-shadow: 0 0 8px var(--accent);
 }
 
 .brand-bar h1,
 .brand-title {
-  margin: 0 0 8px;
-  font-family: var(--font-body);
-  font-size: clamp(24px, 3.2vw, 34px);
-  line-height: 1.15;
-  font-weight: 700;
+  margin: 0 0 12px;
+  font-family: var(--font-display);
+  font-size: clamp(26px, 3.6vw, 40px);
+  line-height: 1.12;
+  font-weight: 600;
   letter-spacing: -0.02em;
   color: #ffffff;
+  background: linear-gradient(100deg, #ffffff 0%, #d6ecff 40%, #7fd6ff 75%, #8f7bff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .brand-bar .subtitle {
   margin: 0;
-  color: #a9b4c2;
+  color: var(--text-muted);
   max-width: 62ch;
   font-size: 15px;
   line-height: 1.6;
@@ -428,6 +539,12 @@ h3 {
   .brand-inner {
     padding: 16px;
     gap: 14px 18px;
+  }
+
+  .brand-bar--hero .brand-inner {
+    min-height: 0;
+    padding-top: 16px;
+    padding-bottom: 28px;
   }
 
   .brand-logo {
@@ -445,7 +562,9 @@ h3 {
 
 @media print {
   .brand-bar,
-  body::before {
+  body::before,
+  body::after,
+  .circuit-fx {
     display: none;
   }
 }
@@ -481,11 +600,11 @@ h3 {
 
 /* ============================================================ EV vs Fuel Cost additions */
 :root {
-  --fuel: #f0883e;            /* the fuel car, everywhere */
-  --ev: #3fb6ff;              /* the electric car, everywhere */
-  --ev-soft: #2a6f99;
-  --good: #4ade80;
-  --bad: #f87171;
+  --fuel: #ff9a4d;            /* the fuel car, everywhere */
+  --ev: #4cc9ff;              /* the electric car, everywhere */
+  --ev-soft: #2a78b8;
+  --good: #2ee6a6;
+  --bad: #ff5d73;
 }
 
 .link-button {
@@ -897,7 +1016,7 @@ legend {
   flex-basis: 0;
 }
 
-.mix-seg--home { background: #4ade80; }
+.mix-seg--home { background: var(--good); }
 .mix-seg--ac { background: #3fb6ff; }
 .mix-seg--dc { background: #c084fc; }
 
@@ -1340,7 +1459,7 @@ svg .be-label {
   position: relative;
   height: 8px;
   border-radius: 4px;
-  background: linear-gradient(to right, #4ade80 0%, #4ade80 18%, #fbbf24 55%, #f87171 85%);
+  background: linear-gradient(to right, var(--pass) 0%, var(--pass) 18%, var(--warn) 55%, var(--fail) 85%);
   opacity: 0.85;
 }
 
@@ -1501,7 +1620,7 @@ svg .be-label {
 .stack-seg--energy { background: var(--fuel); }
 .stack-row:nth-child(2) .stack-seg--energy { background: var(--ev); }
 .stack-seg--upkeep { background: #9aa4ae; }
-.stack-seg--insurance { background: #fbbf24; }
+.stack-seg--insurance { background: var(--warn); }
 .stack-seg--instalment { background: #c084fc; }
 
 .stack-value {
@@ -1560,5 +1679,236 @@ svg .be-label {
 
   .stack-label {
     grid-column: 1 / -1;
+  }
+}
+
+/* ------------------------------------------------------------ charging kit: a tick box, then its price if it isn't included */
+.kit {
+  margin-top: 12px;
+}
+
+.kit > .check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.kit .field {
+  margin-top: 6px;
+  padding-left: 26px;
+}
+
+#kit-total {
+  margin-top: 12px;
+}
+
+/* ------------------------------------------------------------ animated diagrams (js/viz.js) */
+.viz {
+  display: block;
+  width: 100%;
+}
+
+.race {
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+.jar {
+  margin-bottom: 12px;
+}
+
+/* ------------------------------------------------------------ deep space finish
+   Screen only, so the print layout stays plain. Glass cards with HUD corner
+   brackets, glowing section numbers, titles and big figures (fuel orange, EV
+   blue), gradient chips, a glow on the entry being typed in and soft glows on
+   the charts. Nothing here loops (owner, 2026-10-19: nothing should move behind
+   the text): the header animation (js/fx.js) is the only continuous motion, and
+   the fade-ins (js/fx.js adds .fx-reveal / .is-visible) play once. */
+@media screen {
+  /* -------- glass */
+  fieldset,
+  .result-card,
+  .know,
+  .faq-item,
+  .disclaimer {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.008)), var(--glass);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    backdrop-filter: blur(14px) saturate(140%);
+    box-shadow: 0 24px 48px -24px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  }
+
+  fieldset,
+  .result-card,
+  .know {
+    position: relative;
+    border-radius: 18px;
+  }
+
+  .tile,
+  .chip {
+    background-color: var(--glass-2);
+  }
+
+  /* -------- HUD corner brackets */
+  fieldset::after,
+  .result-card::after {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    pointer-events: none;
+    --c: rgba(76, 201, 255, 0.75);
+    background:
+      linear-gradient(var(--c), var(--c)) top left / 14px 1px,
+      linear-gradient(var(--c), var(--c)) top left / 1px 14px,
+      linear-gradient(var(--c), var(--c)) top right / 14px 1px,
+      linear-gradient(var(--c), var(--c)) top right / 1px 14px,
+      linear-gradient(var(--c), var(--c)) bottom left / 14px 1px,
+      linear-gradient(var(--c), var(--c)) bottom left / 1px 14px,
+      linear-gradient(var(--c), var(--c)) bottom right / 14px 1px,
+      linear-gradient(var(--c), var(--c)) bottom right / 1px 14px;
+    background-repeat: no-repeat;
+    filter: drop-shadow(0 0 4px rgba(76, 201, 255, 0.8));
+    opacity: 0.7;
+    transition: opacity 0.3s;
+  }
+
+  fieldset:hover::after,
+  fieldset:focus-within::after,
+  .result-card:hover::after {
+    opacity: 1;
+  }
+
+  fieldset:focus-within {
+    border-color: rgba(76, 201, 255, 0.35);
+  }
+
+  /* -------- headings, sized for Sora */
+  .block-title {
+    font-weight: 600;
+    text-shadow: 0 0 22px var(--accent-glow);
+  }
+
+  .block-num {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #fff;
+    background: radial-gradient(circle, rgba(76, 201, 255, 0.28), rgba(76, 201, 255, 0.04));
+    box-shadow: 0 0 14px rgba(76, 201, 255, 0.5), inset 0 0 8px rgba(76, 201, 255, 0.35);
+  }
+
+  legend,
+  .card-title {
+    font-size: 1.05rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    text-shadow: 0 0 14px var(--accent-glow);
+  }
+
+  .know h3 {
+    font-size: 1rem;
+    font-weight: 600;
+  }
+
+  /* -------- the fuel car and the EV, each glowing in its colour */
+  .tile--fuel { --tc: var(--fuel); }
+  .tile--ev { --tc: var(--ev); }
+
+  .tile {
+    box-shadow: 0 -2px 20px -10px var(--tc, transparent);
+  }
+
+  .tile .tile-value {
+    font-size: clamp(1.25rem, 3.4vw, 1.6rem);
+    letter-spacing: -0.01em;
+  }
+
+  .nav a {
+    font-size: 0.95rem;
+  }
+
+  .tile-value {
+    font-family: var(--font-display);
+    font-weight: 600;
+    text-shadow: 0 0 18px color-mix(in srgb, var(--tc, var(--accent)) 55%, transparent);
+  }
+
+  .save--good {
+    text-shadow: 0 0 14px rgba(46, 230, 166, 0.4);
+  }
+
+  .bar--fuel { box-shadow: 0 0 12px -2px var(--fuel); }
+  .bar--ev { box-shadow: 0 0 12px -2px var(--ev); }
+
+  /* -------- controls */
+  .chip[aria-pressed="true"] {
+    background: linear-gradient(135deg, rgba(76, 201, 255, 0.28), rgba(124, 92, 255, 0.22));
+    color: #fff;
+    box-shadow: 0 0 16px -4px rgba(76, 201, 255, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  }
+
+  .with-unit {
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .with-unit:focus-within {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(76, 201, 255, 0.15), 0 0 18px rgba(76, 201, 255, 0.25);
+  }
+
+  /* -------- charts */
+  svg .batt-line,
+  svg .own-line.own--ev {
+    filter: drop-shadow(0 0 4px rgba(76, 201, 255, 0.8));
+  }
+
+  svg .own-line.own--fuel {
+    filter: drop-shadow(0 0 4px rgba(255, 154, 77, 0.8));
+  }
+
+  /* -------- fade-ins (the form and the "good to know" cards) */
+  .fx-reveal .inputs fieldset,
+  .fx-reveal .know-grid > * {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.2s;
+  }
+
+  .fx-reveal .inputs fieldset.is-visible,
+  .fx-reveal .know-grid > .is-visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* -------- footer and the phones' bottom bar */
+  .site-footer {
+    position: relative;
+    border-top: 0;
+  }
+
+  .site-footer::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 10%;
+    right: 10%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(76, 201, 255, 0.4), rgba(124, 92, 255, 0.35), transparent);
+  }
+
+  .quickbar {
+    background: rgba(8, 14, 38, 0.92);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.6);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .brand-text > * {
+    animation: none !important;
   }
 }

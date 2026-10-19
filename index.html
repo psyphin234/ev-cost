@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en-ZA">
+<html lang="en-ZA" data-circuit="still">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -35,7 +35,7 @@
   <meta property="og:description" content="Electric vs petrol or diesel in South Africa: cost per km at today's fuel price, home electricity and public chargers, plus an N3 road-trip planner and a buyer's break-even.">
   <meta property="og:image" content="https://psyphin.co.za/assets/img/projects/ev-cost.jpg">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="theme-color" content="#020203">
+  <meta name="theme-color" content="#040817">
   <meta name="color-scheme" content="dark">
   <link rel="icon" href="favicon.ico" sizes="48x48">
   <link rel="icon" href="favicon-96x96.png" type="image/png" sizes="96x96">
@@ -43,13 +43,14 @@
   <link rel="apple-touch-icon" href="apple-touch-icon.png" sizes="180x180">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=2026-10-17">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css?v=2026-10-19g">
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
 
-  <header class="brand-bar">
+  <header class="brand-bar brand-bar--hero">
+    <canvas class="hero-fx" aria-hidden="true"></canvas>
     <div class="brand-nav">
       <a class="back-link" href="https://psyphin.co.za/#tools"><span class="back-link-arrow" aria-hidden="true">&larr;</span> <span class="back-link-label"><span class="back-link-more">More </span>PsyPhin tools</span> <span class="back-link-domain">psyphin.co.za</span></a>
       <nav class="nav" aria-label="Site">
@@ -210,6 +211,7 @@
 
           <div class="result-card">
             <h3 class="card-title">Cost per 100 km</h3>
+            <div class="race" id="race"></div>
             <div class="bars" id="bars"></div>
           </div>
 
@@ -383,6 +385,36 @@
               <p class="hint">A new car, and an EV especially, usually costs more to insure than an older car. Get a quote and enter the difference.</p>
             </div>
           </fieldset>
+
+          <fieldset>
+            <legend>Charging kit</legend>
+            <p class="hint">What comes with the EV? Untick anything that doesn't and enter its price. It's added to the EV's cost in section 4.</p>
+            <div class="kit">
+              <label class="check"><input id="wallboxIncluded" type="checkbox"> Wall-box charger included</label>
+              <div class="field" id="wallbox-price">
+                <label for="chargerCost">Wall box, installed</label>
+                <div class="with-unit"><span class="unit-before">R</span><input id="chargerCost" type="number" inputmode="numeric" min="0" step="1000"></div>
+                <p class="hint">Use 0 if you'll charge from a normal plug or won't charge at home.</p>
+              </div>
+            </div>
+            <div class="kit">
+              <label class="check"><input id="portableIncluded" type="checkbox"> Portable charger included</label>
+              <div class="field" id="portable-price">
+                <label for="portableCost">Portable charger</label>
+                <div class="with-unit"><span class="unit-before">R</span><input id="portableCost" type="number" inputmode="numeric" min="0" step="500"></div>
+                <p class="hint">The cable that charges from an ordinary wall plug, at home or away. Use 0 if you won't buy one.</p>
+              </div>
+            </div>
+            <div class="kit">
+              <label class="check"><input id="v2lIncluded" type="checkbox"> V2L cable included</label>
+              <div class="field" id="v2l-price">
+                <label for="v2lCost">V2L cable</label>
+                <div class="with-unit"><span class="unit-before">R</span><input id="v2lCost" type="number" inputmode="numeric" min="0" step="500"></div>
+                <p class="hint">Vehicle-to-load: runs lights, a fridge or tools off the car's battery (handy in load shedding or camping), if the car supports it. Use 0 if you don't want one.</p>
+              </div>
+            </div>
+            <p class="hint" id="kit-total"></p>
+          </fieldset>
         </form>
 
         <div class="results" id="keep-results" aria-live="polite">
@@ -404,6 +436,7 @@
           </div>
           <div class="result-card">
             <h3 class="card-title">Where the money goes each month</h3>
+            <div class="jar" id="keep-jar"></div>
             <div class="stack" id="keep-stack"></div>
           </div>
           <div class="result-card">
@@ -418,7 +451,7 @@
     <!-- ============================================================ buying -->
     <section class="block" id="buying" aria-labelledby="buying-title">
       <h2 class="block-title" id="buying-title"><span class="block-num">4</span> Buying outright: total cost</h2>
-      <p class="block-lede">An EV usually costs more to buy and less to run. This shows when (or whether) the running savings pay back the difference, using your driving and charging from section 1.</p>
+      <p class="block-lede">An EV usually costs more to buy and less to run. This shows when (or whether) the running savings pay back the difference, using your driving and charging from section 1 and the charging kit from section 3.</p>
 
       <div class="calc-layout">
         <form class="inputs" id="buy-form" autocomplete="off" novalidate>
@@ -434,11 +467,7 @@
                 <div class="with-unit"><span class="unit-before">R</span><input id="fuelCarPrice" type="number" inputmode="numeric" min="0" step="5000"></div>
               </div>
             </div>
-            <div class="field">
-              <label for="chargerCost">Home charger, installed</label>
-              <div class="with-unit"><span class="unit-before">R</span><input id="chargerCost" type="number" inputmode="numeric" min="0" step="1000"></div>
-              <p class="hint">Example figures: type in real quotes. Use 0 if you'll charge from a normal plug or won't charge at home.</p>
-            </div>
+            <p class="hint">Example figures: type in real quotes.</p>
           </fieldset>
           <fieldset>
             <legend>Running</legend>
@@ -580,9 +609,12 @@
     </div>
   </footer>
 
-  <script src="js/data.js?v=2026-10-15b"></script>
-  <script src="js/calc.js?v=2026-10-15b"></script>
-  <script src="js/app.js?v=2026-10-15b"></script>
+  <script src="js/data.js?v=2026-10-19g"></script>
+  <script src="js/calc.js?v=2026-10-19g"></script>
+  <script src="js/viz.js?v=2026-10-19g"></script>
+  <script src="js/app.js?v=2026-10-19g"></script>
+  <script src="js/circuit.js?v=2026-10-19g"></script>
+  <script src="js/fx.js?v=2026-10-19g"></script>
 
   <!-- GoatCounter: cookie-free page-visit stats at https://psyphin.goatcounter.com/ (never sees form inputs) -->
   <!-- Shared with psyphin.co.za: prefix paths with the host so this site's "/" is counted separately -->
