@@ -46,9 +46,10 @@ window.EV = (function () {
       publisher: "ChargePoint SA",
       date: "2026"
     },
-    // not published online: CHARGE sent its tariffs by email after seeing this page (no url)
+    // CHARGE first sent its tariffs by email, then asked for a link to this page of theirs
     chargeTariff: {
-      title: "CHARGE's N3 charging tariffs, sent to PsyPhin by email",
+      title: "CHARGE DC charging rates",
+      url: "https://charge.co.za/ev-drivers/charge-dc-charging-rates/",
       publisher: "CHARGE",
       date: "October 2026"
     },
