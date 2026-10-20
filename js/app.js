@@ -427,7 +427,7 @@
     var fuelLabel = D.fuels[state.fuel].label;
     if (p.live) {
       line.appendChild(el("span", { class: "live-dot", "aria-hidden": "true" }));
-      line.appendChild(document.createTextNode("Today's official prices (from " + longDate(p.effective) + "): Petrol 95 " + rand(p.inland.petrol95, true) + " inland, " + rand(p.coastal.petrol95, true) + " coastal; diesel " + rand(p.inland.diesel005, true) + " wholesale. Live from "));
+      line.appendChild(document.createTextNode("Today's official prices (from " + longDate(p.effective) + "): Petrol 95 " + rand(p.inland.petrol95, true) + " inland, " + rand(p.coastal.petrol95, true) + " coastal, diesel " + rand(p.inland.diesel005, true) + " wholesale. Live from "));
       line.appendChild(el("a", { href: "https://fuel.psyphin.co.za/", text: "SA Fuel Price Preview" }));
       line.appendChild(document.createTextNode("."));
     } else if (liveStatus === "loading") {
@@ -453,7 +453,7 @@
       });
       h.appendChild(b);
     } else {
-      h.textContent = "Today's official " + D.fuels[state.fuel].label + " " + regionLabel + (prices().live ? " (live)." : ".") + (state.fuel === "diesel005" ? " Diesel is the wholesale price; pumps charge a little more." : "");
+      h.textContent = "Today's official " + D.fuels[state.fuel].label + " " + regionLabel + (prices().live ? " (live)." : ".") + (state.fuel === "diesel005" ? " Diesel is the wholesale price, pumps charge a little more." : "");
     }
 
     renderEvScale();
@@ -507,7 +507,7 @@
       var band = sc.bands.filter(function (b) { return k < b.upTo; })[0];
       var diff = (k - sc.average) / sc.average;
       note.appendChild(el("strong", { text: num(k, 1) + " kWh/100 km is " + band.label + " " }));
-      note.appendChild(document.createTextNode("(typical of " + band.note + "; " +
+      note.appendChild(document.createTextNode("(typical of " + band.note + ", " +
         (Math.abs(diff) < 0.03 ? "right on" : pct(Math.abs(diff)) + (diff < 0 ? " below" : " above")) +
         " the " + num(sc.average, 1) + " average). Real-world figures across all EVs run from " + num(sc.best.value, 1) + " (" + sc.best.car + ") to " + num(sc.worst.value, 1) + " (" + sc.worst.car + "). Expect more on the highway and in the cold. "));
       note.appendChild(sourceLink(sc.source));
@@ -689,7 +689,7 @@
     var list = clear($("n3-list"));
     chargers.forEach(function (c) {
       list.appendChild(el("li", null, [
-        el("strong", { text: c.name }), " · " + c.where + ". " + c.what + (c.opened ? "; opened " + c.opened : "") + ". ",
+        el("strong", { text: c.name }), " · " + c.where + ". " + c.what + (c.opened ? ", opened " + c.opened : "") + ". ",
         sourceLink(c.source)
       ]));
     });
@@ -778,7 +778,7 @@
       ih.textContent = "Worked out from the finance below. Got a quote from the bank or dealer? Type its instalment here instead.";
     }
     var fh = clear($("finance-hint"));
-    fh.appendChild(document.createTextNode("Prime is " + num(D.finance.prime, 2) + "% (since " + D.finance.since + "); your bank may offer more or less. "));
+    fh.appendChild(document.createTextNode("Prime is " + num(D.finance.prime, 2) + "% (since " + D.finance.since + "). Your bank may offer more or less. "));
     fh.appendChild(sourceLink(D.finance.source));
     fh.appendChild(document.createTextNode(" Includes the bank's " + rand(D.finance.fees.monthly) + " monthly fee and " + rand(D.finance.fees.initiation, true) + " initiation fee. "));
     fh.appendChild(sourceLink(D.finance.fees.source));
@@ -973,7 +973,7 @@
     function item(list, strong, rest, src) {
       list.appendChild(el("li", null, [el("strong", { text: strong }), " " + rest + " ", src ? sourceLink(src) : null]));
     }
-    item(ps, "Fuel:", "live from SA Fuel Price Preview (the Central Energy Fund's official figures, inland = Gauteng; coastal is " + rand(D.liveFeed.coastalGap, true) + " less). If that can't be reached: " + longDate(fb.effective) + " prices, 95 " + rand(fb.inland.petrol95, true) + " inland / " + rand(fb.coastal.petrol95, true) + " coastal. " + fb.note, fb.source);
+    item(ps, "Fuel:", "live from SA Fuel Price Preview (the Central Energy Fund's official figures, inland = Gauteng, and coastal is " + rand(D.liveFeed.coastalGap, true) + " less). If that can't be reached: " + longDate(fb.effective) + " prices, 95 " + rand(fb.inland.petrol95, true) + " inland / " + rand(fb.coastal.petrol95, true) + " coastal. " + fb.note, fb.source);
     D.tariffs.home.forEach(function (t) {
       item(ps, "Home, " + t.label + ": " + rand(t.value, true) + "/kWh.", t.note, t.source);
     });
@@ -1005,7 +1005,7 @@
 
     // Common questions: today's charging prices, from the same tariffs the calculator uses
     var home = D.tariffs.home.filter(function (t) { return t.value > 0; }).map(function (t) { return t.value; });
-    $("faq-charge-cost").textContent = "It depends on where you charge. At home, about " + rand(Math.min.apply(null, home), true) + " to " + rand(Math.max.apply(null, home), true) + " per kWh on an Eskom or municipal tariff (nothing extra from your own solar surplus). At public chargers, about " + rand(D.tariffs.publicAc.value, true) + " per kWh on AC and " + rand(D.tariffs.publicDc.value, true) + " on fast DC, the largest network's rates (prices checked " + longDate(D.checked) + "; they change, so check the operator's app). CHARGE's fast chargers on the N3 and N12 cost " + rand(D.tariffs.n3Dc.value, true) + " per kWh. The sources are under “Where the numbers come from”.";
+    $("faq-charge-cost").textContent = "It depends on where you charge. At home, about " + rand(Math.min.apply(null, home), true) + " to " + rand(Math.max.apply(null, home), true) + " per kWh on an Eskom or municipal tariff (nothing extra from your own solar surplus). At public chargers, about " + rand(D.tariffs.publicAc.value, true) + " per kWh on AC and " + rand(D.tariffs.publicDc.value, true) + " on fast DC, the largest network's rates (prices checked " + longDate(D.checked) + ", but they change, so check the operator's app). CHARGE's fast chargers on the N3 and N12 cost " + rand(D.tariffs.n3Dc.value, true) + " per kWh. The sources are under “Where the numbers come from”.";
   }
 
   /* phones: show the bottom bar while the everyday inputs are on screen but its results aren't */

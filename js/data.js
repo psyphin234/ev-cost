@@ -114,7 +114,7 @@ window.EV = (function () {
       date: "24 September 2026"
     },
     eskomTariffs: {
-      title: "Tariffs and Charges Booklet 2026/2027 (Homepower Standard, page 27; Homelight, page 30)",
+      title: "Tariffs and Charges Booklet 2026/2027 (Homepower Standard, page 27, and Homelight, page 30)",
       url: "https://www.eskom.co.za/distribution/wp-content/uploads/2026/07/Eskom-Tariff-booklet_Final.pdf",
       publisher: "Eskom",
       date: "2026"
@@ -177,7 +177,7 @@ window.EV = (function () {
       { id: "solar", label: "Own solar surplus", value: 0, note: "Daytime charging from panels you already have. The panels aren't free, but the extra kWh is." }
     ],
     publicAc: { value: 5.88, source: "rubiconTariffs", note: "GridCars and Rubicon AC rate for their app's customers." },
-    publicDc: { value: 7.35, source: "mybbCharging", note: "GridCars DC rate, the largest network (MyBroadband Oct 2026; Engineering News June 2026 quotes the same)." },
+    publicDc: { value: 7.35, source: "mybbCharging", note: "GridCars DC rate, the largest network (MyBroadband Oct 2026, and Engineering News June 2026 quotes the same)." },
     n3Dc: { value: 9.15, source: "chargeTariff", note: "CHARGE's DC rate at its N3 sites (Roadside and Tugela), from CHARGE itself, October 2026. AC charging there is free until the end of May 2027." },
     examples: [
       { label: "SAEV Charge DC, Cape Town (solar + battery site)", value: "R3.49, or R2.49 when its battery is full", source: "mybbCharging" },
@@ -246,9 +246,9 @@ window.EV = (function () {
 
   // CHARGE's hubs, shown under the trip for a route on the same road (all of them for a distance typed in)
   var highwayChargers = [
-    { name: "CHARGE N3 Roadside", road: "N3", where: "Free State, N3 exit 107 (Roadside interchange), at Leeukop Padstal", what: "3 DC fast chargers (6 bays) at R9.15/kWh + 2 AC, free until the end of May 2027; open 24 hours", opened: "May 2026", source: ["chargeRoadside", "chargeN3", "chargeTariff"] },
-    { name: "CHARGE N3 Tugela", road: "N3", where: "KZN, N3 exit 207 (Winterton interchange), at Three Towers Farm Stall", what: "3 DC fast chargers (6 bays) at R9.15/kWh + 2 AC, free until the end of May 2027; open 24 hours", opened: "May 2026", source: ["chargeTugela", "chargeN3", "chargeTariff"] },
-    { name: "CHARGE N12 Wolmaransstad", road: "N12", where: "North West, N12 between Klerksdorp and Wolmaransstad, at the Leeudoringstad turnoff (Farm Flair farm stall)", what: "6 DC fast-charging bays (CCS2) at R9.15/kWh + 2 AC, free until the end of May 2027; open 24 hours", source: ["chargeWolmaransstad", "chargeTariff"] }
+    { name: "CHARGE N3 Roadside", road: "N3", where: "Free State, N3 exit 107 (Roadside interchange), at Leeukop Padstal", what: "3 DC fast chargers (6 bays) at R9.15/kWh + 2 AC, free until the end of May 2027, open 24 hours", opened: "May 2026", source: ["chargeRoadside", "chargeN3", "chargeTariff"] },
+    { name: "CHARGE N3 Tugela", road: "N3", where: "KZN, N3 exit 207 (Winterton interchange), at Three Towers Farm Stall", what: "3 DC fast chargers (6 bays) at R9.15/kWh + 2 AC, free until the end of May 2027, open 24 hours", opened: "May 2026", source: ["chargeTugela", "chargeN3", "chargeTariff"] },
+    { name: "CHARGE N12 Wolmaransstad", road: "N12", where: "North West, N12 between Klerksdorp and Wolmaransstad, at the Leeudoringstad turnoff (Farm Flair farm stall)", what: "6 DC fast-charging bays (CCS2) at R9.15/kWh + 2 AC, free until the end of May 2027, open 24 hours", source: ["chargeWolmaransstad", "chargeTariff"] }
   ];
 
   var defaults = {
@@ -311,8 +311,8 @@ window.EV = (function () {
     { id: "highway", text: "EVs use noticeably more energy at highway speed: air drag rises with the square of speed. EV Database's real-world figures at a steady 110 km/h for five cars are 29 to 47% above their WLTP figures, and 23 to 29% above their real mixed-driving figures, so the trip planner suggests 40% and 25%. At 120 km/h drag is another 19% higher.", source: "evdbCars" },
     { id: "realWorld", text: "Spec-sheet figures are optimistic for everyday driving, for EVs as for fuel cars. EV Database's real mixed-driving figures for the same five cars are 0 to 14% above their WLTP figures (about 10% in the middle), so for a fair answer use real figures for both cars: a trip-computer average, or the spec figure plus about 10%.", source: "evdbCars" },
     { id: "charge80", text: "Fast chargers slow down a lot above about 80%, so the trip planner charges to 80% at each stop by default. The charging time uses an average power you set, not the charger's maximum." },
-    { id: "elecRise", text: "NERSA approved a 9.01% average increase for municipal customers from 1 July 2026, and 8.76% for Eskom's direct customers from 1 April 2026. The yearly rises in the ownership view are your choice; these are this year's.", source: "enerdataMunicipal" },
-    { id: "diesel", text: "Diesel's price is the regulated wholesale price; filling stations set their own diesel pump price, usually a little higher." },
+    { id: "elecRise", text: "NERSA approved a 9.01% average increase for municipal customers from 1 July 2026, and 8.76% for Eskom's direct customers from 1 April 2026. The yearly rises in the ownership view are your choice. These are this year's.", source: "enerdataMunicipal" },
+    { id: "diesel", text: "Diesel's price is the regulated wholesale price, and filling stations set their own diesel pump price, usually a little higher." },
     { id: "finFees", text: "The worked-out instalment includes the bank's R69 monthly service fee and its R1 207.50 initiation fee, added to the loan: the most the National Credit Act allows, and what the banks charge as standard. A dealer's quote may add more (extras, warranties, credit life cover).", source: "ncaFees" },
     { id: "insurance", text: "A bank requires comprehensive insurance on a car it finances, and a new car costs more to insure than an older one. It isn't in the worked figures: get a quote and enter the extra over what you pay now." },
     { id: "tolls", text: "Tolls, licence fees and parking are left out: they're about the same for both cars." }

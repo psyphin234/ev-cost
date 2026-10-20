@@ -44,7 +44,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=2026-10-20f">
+  <link rel="stylesheet" href="css/style.css?v=2026-10-20g">
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -72,7 +72,7 @@
   <main id="main" class="wrap">
     <section class="intro">
       <p class="lede">Filled in with today's prices so you get an answer straight away. Change anything in a <span class="key-input">blue box</span> to match your car, your bill and how you'd charge.</p>
-      <p class="privacy">Worked out in your browser; nothing you type is sent anywhere. Your inputs are remembered on this device only. <button type="button" class="link-button" id="reset">Reset to defaults</button></p>
+      <p class="privacy">Worked out in your browser. Nothing you type is sent anywhere. Your inputs are remembered on this device only. <button type="button" class="link-button" id="reset">Reset to defaults</button></p>
       <p class="live-line" id="live-line" aria-live="polite">Fetching today's fuel price&hellip;</p>
     </section>
 
@@ -137,7 +137,7 @@
             <div class="field field--narrow">
               <label for="lossPct">Charging losses</label>
               <div class="with-unit"><input id="lossPct" type="number" inputmode="decimal" min="0" max="40" step="1"><span>%</span></div>
-              <p class="hint">Energy lost between the wall and the battery. 10% is a typical example; it's often more on a slow 10 A plug.</p>
+              <p class="hint">Energy lost between the wall and the battery. 10% is a typical example, and it's often more on a slow 10 A plug.</p>
             </div>
           </fieldset>
 
@@ -290,7 +290,7 @@
                 <div class="with-unit"><input id="dcKw" type="number" inputmode="numeric" min="1" step="5"><span>kW</span></div>
               </div>
             </div>
-            <p class="hint">Filled in with CHARGE's DC rate at its N3 and N12 sites, R9.15 (their AC chargers are free until the end of May 2027, but much slower). CHARGE sent us these rates in October 2026; they're also on <a href="https://charge.co.za/ev-drivers/charge-dc-charging-rates/" target="_blank" rel="noopener">CHARGE's rates page ↗</a>. The average speed is well below a charger's rating: cars slow the charge as the battery fills.</p>
+            <p class="hint">Filled in with CHARGE's DC rate at its N3 and N12 sites, R9.15 (their AC chargers are free until the end of May 2027, but much slower). CHARGE sent us these rates in October 2026, and they're also on <a href="https://charge.co.za/ev-drivers/charge-dc-charging-rates/" target="_blank" rel="noopener">CHARGE's rates page ↗</a>. The average speed is well below a charger's rating: cars slow the charge as the battery fills.</p>
           </fieldset>
         </form>
 
@@ -319,7 +319,7 @@
           <div class="result-card" id="n3-card">
             <h3 class="card-title" id="n3-title">Fast chargers on the N3</h3>
             <ul class="chargers" id="n3-list"></ul>
-            <p class="hint">These are CHARGE's hubs. The other fast chargers on the route, mostly at filling stations, are on <a href="https://gridcars.net/live-map/" rel="noopener" target="_blank">GridCars' live map&nbsp;&#8599;</a> (the largest network; its map shows every public charger, whichever network runs it) and on <a href="https://www.plugshare.com/" rel="noopener" target="_blank">PlugShare&nbsp;&#8599;</a>. Check one of them or the operator's app for what's working before you leave, and have a backup stop in range.</p>
+            <p class="hint">These are CHARGE's hubs. The other fast chargers on the route, mostly at filling stations, are on <a href="https://gridcars.net/live-map/" rel="noopener" target="_blank">GridCars' live map&nbsp;&#8599;</a> (the largest network, and its map shows every public charger, whichever network runs it) and on <a href="https://www.plugshare.com/" rel="noopener" target="_blank">PlugShare&nbsp;&#8599;</a>. Check one of them or the operator's app for what's working before you leave, and have a backup stop in range.</p>
           </div>
         </div>
       </div>
@@ -328,7 +328,7 @@
     <!-- ============================================================ keep or finance -->
     <section class="block" id="keep" aria-labelledby="keep-title">
       <h2 class="block-title" id="keep-title"><span class="block-num">3</span> Keep your car, or finance an EV?</h2>
-      <p class="block-lede">Can the fuel you'd stop buying pay the EV's monthly instalment? Your current car is the fuel car from section 1, so set its fuel and consumption there; the EV's charging comes from there too.</p>
+      <p class="block-lede">Can the fuel you'd stop buying pay the EV's monthly instalment? Your current car is the fuel car from section 1, so set its fuel and consumption there. The EV's charging comes from there too.</p>
 
       <div class="calc-layout">
         <form class="inputs" id="keep-form" autocomplete="off" novalidate>
@@ -521,7 +521,7 @@
       <h2 class="block-title" id="know-title"><span class="block-num">5</span> Good to know</h2>
       <div class="know-grid">
         <article class="know">
-          <h3>Where you charge decides everything</h3>
+          <h3>Where you charge matters most</h3>
           <p>At home an EV costs a fraction of petrol per km. On fast chargers only, the gap narrows a lot. If you can't charge at home or work, run the "No home charging" mix above before you buy.</p>
         </article>
         <article class="know">
@@ -530,7 +530,7 @@
         </article>
         <article class="know">
           <h3>Speed costs EVs more</h3>
-          <p>Air drag rises with the square of speed. At 120 km/h an EV can use a lot more than its spec-sheet figure; slowing to 100 km/h can save a charging stop on a long trip.</p>
+          <p>Air drag rises with the square of speed. At 120 km/h an EV can use a lot more than its spec-sheet figure. Slowing to 100 km/h can save a charging stop on a long trip.</p>
         </article>
         <article class="know">
           <h3>Outages</h3>
@@ -553,7 +553,7 @@
       <div class="faq-list">
         <details class="faq-item">
           <summary>Is an electric car cheaper to run than petrol in South Africa?</summary>
-          <p>Charged at home, usually by a long way: an EV costs a fraction of petrol per km. On public fast chargers only, the gap narrows a lot. The calculator above compares the two at today's official fuel price and your own electricity price; if you can't charge at home or work, try the "No home charging" mix.</p>
+          <p>Charged at home, usually by a long way: an EV costs a fraction of petrol per km. On public fast chargers only, the gap narrows a lot. The calculator above compares the two at today's official fuel price and your own electricity price. If you can't charge at home or work, try the "No home charging" mix.</p>
         </details>
         <details class="faq-item">
           <summary>How much does it cost to charge an EV in South Africa?</summary>
@@ -596,7 +596,7 @@
 
     <aside class="disclaimer" id="disclaimer">
       <h2>Disclaimer</h2>
-      <p>For information only: estimates from the figures shown, not a quote or financial advice. Fuel, electricity and charging prices change often and differ by area, network and site; consumption depends on the car, the load, the weather and how it's driven. Check prices with your municipality, Eskom and the charging operator before you rely on them.</p>
+      <p>For information only: estimates from the figures shown, not a quote or financial advice. Fuel, electricity and charging prices change often and differ by area, network and site. Consumption depends on the car, the load, the weather and how it's driven. Check prices with your municipality, Eskom and the charging operator before you rely on them.</p>
     </aside>
   </main>
 
@@ -609,12 +609,12 @@
     </div>
   </footer>
 
-  <script src="js/data.js?v=2026-10-20f"></script>
-  <script src="js/calc.js?v=2026-10-20f"></script>
-  <script src="js/viz.js?v=2026-10-20f"></script>
-  <script src="js/app.js?v=2026-10-20f"></script>
-  <script src="js/circuit.js?v=2026-10-20f"></script>
-  <script src="js/fx.js?v=2026-10-20f"></script>
+  <script src="js/data.js?v=2026-10-20g"></script>
+  <script src="js/calc.js?v=2026-10-20g"></script>
+  <script src="js/viz.js?v=2026-10-20g"></script>
+  <script src="js/app.js?v=2026-10-20g"></script>
+  <script src="js/circuit.js?v=2026-10-20g"></script>
+  <script src="js/fx.js?v=2026-10-20g"></script>
 
   <!-- GoatCounter: cookie-free page-visit stats at https://psyphin.goatcounter.com/ (never sees form inputs) -->
   <!-- Shared with psyphin.co.za: prefix paths with the host so this site's "/" is counted separately -->
