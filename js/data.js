@@ -60,6 +60,12 @@ window.EV = (function () {
       publisher: "CHARGE",
       date: "2026"
     },
+    chargeTugela: {
+      title: "CHARGE N3 Tugela",
+      url: "https://charge.co.za/charging-stations/charge-n3-tugela/",
+      publisher: "CHARGE",
+      date: "2026"
+    },
     chargeWolmaransstad: {
       title: "CHARGE N12 Wolmaransstad at Farm Flair",
       url: "https://charge.co.za/charging-stations/charge-wolmaransstad-at-farm-flair/",
@@ -241,8 +247,8 @@ window.EV = (function () {
   // CHARGE's hubs, shown under the trip for a route on the same road (all of them for a distance typed in)
   var highwayChargers = [
     { name: "CHARGE N3 Roadside", road: "N3", where: "Free State, N3 exit 107 (Roadside interchange), at Leeukop Padstal", what: "3 DC fast chargers (6 bays) at R9.15/kWh + 2 AC, free until the end of May 2027; open 24 hours", opened: "May 2026", source: ["chargeRoadside", "chargeN3", "chargeTariff"] },
-    { name: "CHARGE Tugela", road: "N3", where: "KZN, near Colenso / Winterton, N3 exit 207", what: "3 DC fast chargers (6 bays) at R9.15/kWh + 2 AC, free until the end of May 2027", opened: "May 2026", source: ["chargeN3", "chargeTariff"] },
-    { name: "CHARGE Wolmaransstad", road: "N12", where: "North West, N12 between Klerksdorp and Wolmaransstad, at the Leeudoringstad turnoff (Farm Flair farm stall)", what: "6 DC fast-charging bays (CCS2) at R9.15/kWh + 2 AC, free until the end of May 2027; open 24 hours", source: ["chargeWolmaransstad", "chargeTariff"] }
+    { name: "CHARGE N3 Tugela", road: "N3", where: "KZN, N3 exit 207 (Winterton interchange), at Three Towers Farm Stall", what: "3 DC fast chargers (6 bays) at R9.15/kWh + 2 AC, free until the end of May 2027; open 24 hours", opened: "May 2026", source: ["chargeTugela", "chargeN3", "chargeTariff"] },
+    { name: "CHARGE N12 Wolmaransstad", road: "N12", where: "North West, N12 between Klerksdorp and Wolmaransstad, at the Leeudoringstad turnoff (Farm Flair farm stall)", what: "6 DC fast-charging bays (CCS2) at R9.15/kWh + 2 AC, free until the end of May 2027; open 24 hours", source: ["chargeWolmaransstad", "chargeTariff"] }
   ];
 
   var defaults = {
