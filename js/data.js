@@ -53,6 +53,12 @@ window.EV = (function () {
       publisher: "CHARGE",
       date: "October 2026"
     },
+    chargeWolmaransstad: {
+      title: "CHARGE N12 Wolmaransstad at Farm Flair",
+      url: "https://charge.co.za/charging-stations/charge-wolmaransstad-at-farm-flair/",
+      publisher: "CHARGE",
+      date: "2026"
+    },
     nersa2026: {
       title: "Eskom implements NERSA decision for Financial Year 2027",
       url: "https://www.eskom.co.za/eskom-implements-nersa-decision-for-financial-year-2027/",
@@ -217,16 +223,19 @@ window.EV = (function () {
     fees: { initiation: 1207.50, monthly: 69, source: "ncaFees" } };
 
   var routes = [
-    { id: "jhb-dbn", label: "Joburg to Durban (N3)", km: 570, n3: true },
-    { id: "jhb-pmb", label: "Joburg to Pietermaritzburg (N3)", km: 490, n3: true },
-    { id: "jhb-hsmith", label: "Joburg to Harrismith (N3)", km: 275, n3: true },
-    { id: "jhb-cpt", label: "Joburg to Cape Town (N1)", km: 1400, n3: false },
-    { id: "commute", label: "40 km commute", km: 40, n3: false }
+    { id: "jhb-dbn", label: "Joburg to Durban (N3)", km: 570, road: "N3" },
+    { id: "jhb-pmb", label: "Joburg to Pietermaritzburg (N3)", km: 490, road: "N3" },
+    { id: "jhb-hsmith", label: "Joburg to Harrismith (N3)", km: 275, road: "N3" },
+    { id: "jhb-kim", label: "Joburg to Kimberley (N12)", km: 470, road: "N12" },
+    { id: "jhb-cpt", label: "Joburg to Cape Town (N1)", km: 1400, road: "N1" },
+    { id: "commute", label: "40 km commute", km: 40 }
   ];
 
-  var n3Chargers = [
-    { name: "CHARGE Reitz Interchange", where: "Free State, N3 exit 107", what: "3 DC fast chargers (6 bays) at R9.15/kWh + 2 AC, free until the end of May 2027", opened: "May 2026", source: ["chargeN3", "chargeTariff"] },
-    { name: "CHARGE Tugela", where: "KZN, near Colenso / Winterton, N3 exit 207", what: "3 DC fast chargers (6 bays) at R9.15/kWh + 2 AC, free until the end of May 2027", opened: "May 2026", source: ["chargeN3", "chargeTariff"] }
+  // CHARGE's hubs, shown under the trip for a route on the same road (all of them for a distance typed in)
+  var highwayChargers = [
+    { name: "CHARGE Reitz Interchange", road: "N3", where: "Free State, N3 exit 107", what: "3 DC fast chargers (6 bays) at R9.15/kWh + 2 AC, free until the end of May 2027", opened: "May 2026", source: ["chargeN3", "chargeTariff"] },
+    { name: "CHARGE Tugela", road: "N3", where: "KZN, near Colenso / Winterton, N3 exit 207", what: "3 DC fast chargers (6 bays) at R9.15/kWh + 2 AC, free until the end of May 2027", opened: "May 2026", source: ["chargeN3", "chargeTariff"] },
+    { name: "CHARGE Wolmaransstad", road: "N12", where: "North West, N12 between Klerksdorp and Wolmaransstad, at the Leeudoringstad turnoff (Farm Flair farm stall)", what: "6 DC fast-charging bays (CCS2) at R9.15/kWh + 2 AC, free until the end of May 2027; open 24 hours", source: ["chargeWolmaransstad", "chargeTariff"] }
   ];
 
   var defaults = {
@@ -307,7 +316,7 @@ window.EV = (function () {
     finance: finance,
     highway: highway,
     routes: routes,
-    n3Chargers: n3Chargers,
+    highwayChargers: highwayChargers,
     defaults: defaults,
     assumptions: assumptions,
     checked: "2026-10-13"

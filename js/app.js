@@ -683,14 +683,18 @@
     drawTrip(C.tripProfile(state, tr), tr);
     $("trip-chart-note").textContent = "Uses " + num(tr.perKm * 100, 1) + " kWh per 100 km from the battery at highway speed (" + num(state.kwhPer100, 1) + " + " + Math.round(state.highwayPct) + "%" + (state.figureFrom === "spec" ? ", less charging losses, since the spec figure is at the wall" : "") + "). Real stops depend on where the chargers are.";
 
+    var route = D.routes.filter(function (r) { return r.id === state.route; })[0];
+    var road = route ? route.road : null;
+    var chargers = D.highwayChargers.filter(function (c) { return !route || c.road === road; });
     var list = clear($("n3-list"));
-    D.n3Chargers.forEach(function (c) {
+    chargers.forEach(function (c) {
       list.appendChild(el("li", null, [
-        el("strong", { text: c.name }), " · " + c.where + ". " + c.what + ". ",
+        el("strong", { text: c.name }), " · " + c.where + ". " + c.what + (c.opened ? "; opened " + c.opened : "") + ". ",
         sourceLink(c.source)
       ]));
     });
-    $("n3-card").hidden = !(D.routes.filter(function (r) { return r.id === state.route && r.n3; }).length || !state.route);
+    $("n3-title").textContent = route ? "Fast chargers on the " + road : "CHARGE's highway fast chargers";
+    $("n3-card").hidden = !chargers.length;
   }
 
   function duration(min) {
@@ -1001,7 +1005,7 @@
 
     // Common questions: today's charging prices, from the same tariffs the calculator uses
     var home = D.tariffs.home.filter(function (t) { return t.value > 0; }).map(function (t) { return t.value; });
-    $("faq-charge-cost").textContent = "It depends on where you charge. At home, about " + rand(Math.min.apply(null, home), true) + " to " + rand(Math.max.apply(null, home), true) + " per kWh on an Eskom or municipal tariff (nothing extra from your own solar surplus). At public chargers, about " + rand(D.tariffs.publicAc.value, true) + " per kWh on AC and " + rand(D.tariffs.publicDc.value, true) + " on fast DC, the largest network's rates (prices checked " + longDate(D.checked) + "; they change, so check the operator's app). CHARGE's fast chargers on the N3 cost " + rand(D.tariffs.n3Dc.value, true) + " per kWh. The sources are under “Where the numbers come from”.";
+    $("faq-charge-cost").textContent = "It depends on where you charge. At home, about " + rand(Math.min.apply(null, home), true) + " to " + rand(Math.max.apply(null, home), true) + " per kWh on an Eskom or municipal tariff (nothing extra from your own solar surplus). At public chargers, about " + rand(D.tariffs.publicAc.value, true) + " per kWh on AC and " + rand(D.tariffs.publicDc.value, true) + " on fast DC, the largest network's rates (prices checked " + longDate(D.checked) + "; they change, so check the operator's app). CHARGE's fast chargers on the N3 and N12 cost " + rand(D.tariffs.n3Dc.value, true) + " per kWh. The sources are under “Where the numbers come from”.";
   }
 
   /* phones: show the bottom bar while the everyday inputs are on screen but its results aren't */
