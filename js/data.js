@@ -54,6 +54,12 @@ window.EV = (function () {
       label: "CHARGE rates", // the link's text, in place of the publisher's name
       date: "October 2026"
     },
+    chargeRoadside: {
+      title: "CHARGE N3 Roadside",
+      url: "https://charge.co.za/charging-stations/charge-n3-roadside/",
+      publisher: "CHARGE",
+      date: "2026"
+    },
     chargeWolmaransstad: {
       title: "CHARGE N12 Wolmaransstad at Farm Flair",
       url: "https://charge.co.za/charging-stations/charge-wolmaransstad-at-farm-flair/",
@@ -166,7 +172,7 @@ window.EV = (function () {
     ],
     publicAc: { value: 5.88, source: "rubiconTariffs", note: "GridCars and Rubicon AC rate for their app's customers." },
     publicDc: { value: 7.35, source: "mybbCharging", note: "GridCars DC rate, the largest network (MyBroadband Oct 2026; Engineering News June 2026 quotes the same)." },
-    n3Dc: { value: 9.15, source: "chargeTariff", note: "CHARGE's DC rate at its N3 sites (Reitz and Tugela), from CHARGE itself, October 2026. AC charging there is free until the end of May 2027." },
+    n3Dc: { value: 9.15, source: "chargeTariff", note: "CHARGE's DC rate at its N3 sites (Roadside and Tugela), from CHARGE itself, October 2026. AC charging there is free until the end of May 2027." },
     examples: [
       { label: "SAEV Charge DC, Cape Town (solar + battery site)", value: "R3.49, or R2.49 when its battery is full", source: "mybbCharging" },
       { label: "AIDC Eastern Cape network, from 1 July 2026", value: "R7.50 (was R7.00)", source: "topautoAidc" },
@@ -234,7 +240,7 @@ window.EV = (function () {
 
   // CHARGE's hubs, shown under the trip for a route on the same road (all of them for a distance typed in)
   var highwayChargers = [
-    { name: "CHARGE Reitz Interchange", road: "N3", where: "Free State, N3 exit 107", what: "3 DC fast chargers (6 bays) at R9.15/kWh + 2 AC, free until the end of May 2027", opened: "May 2026", source: ["chargeN3", "chargeTariff"] },
+    { name: "CHARGE N3 Roadside", road: "N3", where: "Free State, N3 exit 107 (Roadside interchange), at Leeukop Padstal", what: "3 DC fast chargers (6 bays) at R9.15/kWh + 2 AC, free until the end of May 2027; open 24 hours", opened: "May 2026", source: ["chargeRoadside", "chargeN3", "chargeTariff"] },
     { name: "CHARGE Tugela", road: "N3", where: "KZN, near Colenso / Winterton, N3 exit 207", what: "3 DC fast chargers (6 bays) at R9.15/kWh + 2 AC, free until the end of May 2027", opened: "May 2026", source: ["chargeN3", "chargeTariff"] },
     { name: "CHARGE Wolmaransstad", road: "N12", where: "North West, N12 between Klerksdorp and Wolmaransstad, at the Leeudoringstad turnoff (Farm Flair farm stall)", what: "6 DC fast-charging bays (CCS2) at R9.15/kWh + 2 AC, free until the end of May 2027; open 24 hours", source: ["chargeWolmaransstad", "chargeTariff"] }
   ];
