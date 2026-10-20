@@ -51,6 +51,7 @@ window.EV = (function () {
       title: "CHARGE DC charging rates",
       url: "https://charge.co.za/ev-drivers/charge-dc-charging-rates/",
       publisher: "CHARGE",
+      label: "CHARGE rates", // the link's text, in place of the publisher's name
       date: "October 2026"
     },
     chargeWolmaransstad: {

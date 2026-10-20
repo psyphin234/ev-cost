@@ -80,7 +80,7 @@
     var s = D.sources[id];
     if (!s) return null;
     if (!s.url) return el("span", { text: "(" + s.publisher + ")" });
-    return el("a", { href: s.url, target: "_blank", rel: "noopener", text: s.publisher + " ↗" });
+    return el("a", { href: s.url, target: "_blank", rel: "noopener", text: (s.label || s.publisher) + " ↗" });
   }
 
   /* ------------------------------------------------------------ state */
