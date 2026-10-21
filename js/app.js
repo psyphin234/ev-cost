@@ -248,7 +248,9 @@
       }));
     });
 
-    // number inputs: id = state key
+    // number inputs: id = state key. They're type="text" (with inputmode for the keypad):
+    // iPhone Safari's number boxes mangle a decimal comma ("6,2" came through as 62),
+    // so the page reads what was typed itself. The up and down arrows still step it.
     ["kmMonth", "fuelPrice", "lPer100", "kwhPer100", "lossPct", "homePrice", "acPrice", "dcPrice",
       "tripKm", "battery", "highwayPct", "startPct", "chargeToPct", "reservePct", "n3Price", "dcKw",
       "evPrice", "fuelCarPrice", "chargerCost", "portableCost", "v2lCost", "evService", "fuelService", "years", "fuelRise", "elecRise",
@@ -257,7 +259,7 @@
       var input = $(id);
       var k = id === "finPrice" ? "evPrice" : id; // the EV price box appears in two sections
       input.addEventListener("input", function () {
-        var v = parseFloat(input.value.replace(",", "."));
+        var v = C.parseNumber(input.value);
         if (!isFinite(v)) {
           if (k === "fuelPrice" || k === "instalment") state[k] = null;
           return;
@@ -267,6 +269,17 @@
         if (k === "lPer100" || k === "kwhPer100") state.sizeClass = "";
         if (k === "tripKm") state.route = "";
         changed(id);
+      });
+      input.addEventListener("keydown", function (e) {
+        if (e.key !== "ArrowUp" && e.key !== "ArrowDown") return;
+        e.preventDefault();
+        var step = Number(input.getAttribute("step")) || 1;
+        var lo = input.hasAttribute("min") ? Number(input.getAttribute("min")) : -Infinity;
+        var hi = input.hasAttribute("max") ? Number(input.getAttribute("max")) : Infinity;
+        var v = C.parseNumber(input.value);
+        v = (isFinite(v) ? v : 0) + (e.key === "ArrowUp" ? step : -step);
+        input.value = String(Math.round(C.clamp(v, lo, hi) * 100) / 100);
+        input.dispatchEvent(new Event("input"));
       });
       input.addEventListener("blur", function () {
         render();

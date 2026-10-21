@@ -237,6 +237,18 @@
     if (!(k.costOfCredit > 69 * 60 + 1207.5)) throw new Error("cost of credit should exceed the fees alone");
   });
 
+  // ------------------------------------------------------------ typed numbers
+  test("parseNumber reads a decimal comma or point, and thousands", () => {
+    const cases = [
+      ["6.2", 6.2], ["6,2", 6.2], ["6,", 6], ["6.", 6], [",5", 0.5], ["  7,25 ", 7.25],
+      ["450 000", 450000], ["450 000", 450000], ["450,000", 450000], ["1,250,000", 1250000],
+      ["1 234,56", 1234.56], ["1.234,56", 1234.56], ["1,234.56", 1234.56], ["R23.45", 23.45],
+      ["-3", -3], ["−3", -3], ["0,125", 0.125], ["12,3456", 12.3456]
+    ];
+    cases.forEach(([text, want]) => eq(C.parseNumber(text), want, JSON.stringify(text)));
+    ["", "-", "abc", "6.2.x", "1,2,3x"].forEach((text) => eq(isNaN(C.parseNumber(text)), true, JSON.stringify(text) + " is not a number"));
+  });
+
   // ------------------------------------------------------------ report
   const failed = results.filter((r) => !r.ok);
   const list = document.getElementById("results");

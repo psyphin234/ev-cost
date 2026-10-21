@@ -6,6 +6,23 @@ window.Calc = (function () {
     return Math.min(hi, Math.max(lo, v));
   }
 
+  /* A typed number, read the way people write it: "6.2" or "6,2" (the comma is
+     South Africa's decimal mark and what an iPhone's keypad shows there),
+     "450 000" or "450,000" for thousands. NaN if it isn't a number. */
+  function parseNumber(text) {
+    var s = String(text == null ? "" : text).replace(/[\s']/g, "").replace(/^R/i, "").replace(String.fromCharCode(8722), "-"); // \s takes non-breaking spaces too
+    var comma = s.lastIndexOf(","), dot = s.lastIndexOf(".");
+    if (comma >= 0 && dot >= 0) {
+      // both: the later one is the decimal mark
+      s = comma > dot ? s.replace(/\./g, "").replace(",", ".") : s.replace(/,/g, "");
+    } else if (comma >= 0) {
+      s = s.split(",").length > 2 || /^-?[1-9]\d{0,2},\d{3}$/.test(s) ? s.replace(/,/g, "") : s.replace(",", ".");
+    } else if (s.split(".").length > 2) {
+      s = s.replace(/\./g, "");
+    }
+    return /^-?(\d+\.?\d*|\.\d+)$/.test(s) ? parseFloat(s) : NaN;
+  }
+
   /* An EV figure is either from the spec sheet (WLTP: measured at the wall,
      losses included) or from the car's own display (what the battery gave).
      Returns both sides: wall = what you pay for, battery = what range uses. */
@@ -254,6 +271,7 @@ window.Calc = (function () {
 
   return {
     clamp: clamp,
+    parseNumber: parseNumber,
     instalment: instalment,
     priceFor: priceFor,
     keepOrBuy: keepOrBuy,

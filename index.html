@@ -44,7 +44,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=2026-10-20g">
+  <link rel="stylesheet" href="css/style.css?v=2026-10-21a">
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -92,7 +92,7 @@
             <legend>How far you drive</legend>
             <div class="field">
               <label for="kmMonth">Kilometres a month</label>
-              <div class="with-unit"><input id="kmMonth" type="number" inputmode="numeric" min="0" step="100"><span>km</span></div>
+              <div class="with-unit"><input id="kmMonth" type="text" inputmode="numeric" min="0" step="100"><span>km</span></div>
               <p class="hint" id="km-year"></p>
             </div>
           </fieldset>
@@ -107,12 +107,12 @@
             <div class="field-row">
               <div class="field">
                 <label for="fuelPrice">Fuel price</label>
-                <div class="with-unit"><span class="unit-before">R</span><input id="fuelPrice" type="number" inputmode="decimal" min="0" step="0.01"><span>/ litre</span></div>
+                <div class="with-unit"><span class="unit-before">R</span><input id="fuelPrice" type="text" inputmode="decimal" min="0" step="0.01"><span>/ litre</span></div>
                 <p class="hint" id="fuel-price-hint"></p>
               </div>
               <div class="field">
                 <label for="lPer100">Consumption</label>
-                <div class="with-unit"><input id="lPer100" type="number" inputmode="decimal" min="0" step="0.1"><span>l / 100 km</span></div>
+                <div class="with-unit"><input id="lPer100" type="text" inputmode="decimal" min="0" step="0.1"><span>l / 100 km</span></div>
                 <p class="hint">Your real figure, not the brochure's: brochure figures are usually optimistic.</p>
               </div>
             </div>
@@ -122,7 +122,7 @@
             <legend><span class="dot dot--ev" aria-hidden="true"></span> Electric car</legend>
             <div class="field">
               <label for="kwhPer100">Consumption</label>
-              <div class="with-unit"><input id="kwhPer100" type="number" inputmode="decimal" min="0" step="0.1"><span>kWh / 100 km</span></div>
+              <div class="with-unit"><input id="kwhPer100" type="text" inputmode="decimal" min="0" step="0.1"><span>kWh / 100 km</span></div>
               <div class="scale" id="ev-scale" aria-hidden="true"></div>
               <p class="hint" id="ev-scale-note"></p>
             </div>
@@ -136,7 +136,7 @@
             </div>
             <div class="field field--narrow">
               <label for="lossPct">Charging losses</label>
-              <div class="with-unit"><input id="lossPct" type="number" inputmode="decimal" min="0" max="40" step="1"><span>%</span></div>
+              <div class="with-unit"><input id="lossPct" type="text" inputmode="decimal" min="0" max="40" step="1"><span>%</span></div>
               <p class="hint">Energy lost between the wall and the battery. 10% is a typical example, and it's often more on a slow 10 A plug.</p>
             </div>
           </fieldset>
@@ -146,17 +146,17 @@
             <div class="field">
               <label for="homePrice">At home</label>
               <div class="chips chips--small" id="home-chips" role="group" aria-label="Home tariff examples"></div>
-              <div class="with-unit"><span class="unit-before">R</span><input id="homePrice" type="number" inputmode="decimal" min="0" step="0.01"><span>/ kWh</span></div>
+              <div class="with-unit"><span class="unit-before">R</span><input id="homePrice" type="text" inputmode="decimal" min="0" step="0.01"><span>/ kWh</span></div>
               <p class="hint" id="home-hint"></p>
             </div>
             <div class="field-row">
               <div class="field">
                 <label for="acPrice">Public AC (malls, offices)</label>
-                <div class="with-unit"><span class="unit-before">R</span><input id="acPrice" type="number" inputmode="decimal" min="0" step="0.01"><span>/ kWh</span></div>
+                <div class="with-unit"><span class="unit-before">R</span><input id="acPrice" type="text" inputmode="decimal" min="0" step="0.01"><span>/ kWh</span></div>
               </div>
               <div class="field">
                 <label for="dcPrice">Fast DC in town</label>
-                <div class="with-unit"><span class="unit-before">R</span><input id="dcPrice" type="number" inputmode="decimal" min="0" step="0.01"><span>/ kWh</span></div>
+                <div class="with-unit"><span class="unit-before">R</span><input id="dcPrice" type="text" inputmode="decimal" min="0" step="0.01"><span>/ kWh</span></div>
               </div>
             </div>
             <p class="hint">Filled in with GridCars' rates (R5.88 AC, R7.35 DC), the biggest public network. <a href="#sources">Other networks' prices</a>.</p>
@@ -241,7 +241,7 @@
             <div class="field-row">
               <div class="field">
                 <label for="tripKm">Distance</label>
-                <div class="with-unit"><input id="tripKm" type="number" inputmode="numeric" min="0" step="10"><span>km</span></div>
+                <div class="with-unit"><input id="tripKm" type="text" inputmode="numeric" min="0" step="10"><span>km</span></div>
               </div>
               <div class="field field--check">
                 <label class="check"><input id="returnTrip" type="checkbox"> There and back</label>
@@ -254,11 +254,11 @@
             <div class="field-row field-row--end">
               <div class="field">
                 <label for="battery">Usable battery</label>
-                <div class="with-unit"><input id="battery" type="number" inputmode="decimal" min="0" step="1"><span>kWh</span></div>
+                <div class="with-unit"><input id="battery" type="text" inputmode="decimal" min="0" step="1"><span>kWh</span></div>
               </div>
               <div class="field">
                 <label for="highwayPct">Extra at highway speed</label>
-                <div class="with-unit"><input id="highwayPct" type="number" inputmode="numeric" min="0" max="100" step="5"><span>%</span></div>
+                <div class="with-unit"><input id="highwayPct" type="text" inputmode="numeric" min="0" max="100" step="5"><span>%</span></div>
               </div>
             </div>
             <p class="hint" id="highway-hint"></p>
@@ -269,25 +269,25 @@
             <div class="field-row field-row--3 field-row--end">
               <div class="field">
                 <label for="startPct">Leave with</label>
-                <div class="with-unit"><input id="startPct" type="number" inputmode="numeric" min="0" max="100" step="5"><span>%</span></div>
+                <div class="with-unit"><input id="startPct" type="text" inputmode="numeric" min="0" max="100" step="5"><span>%</span></div>
               </div>
               <div class="field">
                 <label for="chargeToPct">Charge to</label>
-                <div class="with-unit"><input id="chargeToPct" type="number" inputmode="numeric" min="0" max="100" step="5"><span>%</span></div>
+                <div class="with-unit"><input id="chargeToPct" type="text" inputmode="numeric" min="0" max="100" step="5"><span>%</span></div>
               </div>
               <div class="field">
                 <label for="reservePct">Reserve</label>
-                <div class="with-unit"><input id="reservePct" type="number" inputmode="numeric" min="0" max="50" step="5"><span>%</span></div>
+                <div class="with-unit"><input id="reservePct" type="text" inputmode="numeric" min="0" max="50" step="5"><span>%</span></div>
               </div>
             </div>
             <div class="field-row field-row--end">
               <div class="field">
                 <label for="n3Price">Highway fast charger</label>
-                <div class="with-unit"><span class="unit-before">R</span><input id="n3Price" type="number" inputmode="decimal" min="0" step="0.01"><span>/ kWh</span></div>
+                <div class="with-unit"><span class="unit-before">R</span><input id="n3Price" type="text" inputmode="decimal" min="0" step="0.01"><span>/ kWh</span></div>
               </div>
               <div class="field">
                 <label for="dcKw">Average charging speed</label>
-                <div class="with-unit"><input id="dcKw" type="number" inputmode="numeric" min="1" step="5"><span>kW</span></div>
+                <div class="with-unit"><input id="dcKw" type="text" inputmode="numeric" min="1" step="5"><span>kW</span></div>
               </div>
             </div>
             <p class="hint">Filled in with CHARGE's DC rate at its N3 and N12 sites, R9.15 (their AC chargers are free until the end of May 2027, but much slower). CHARGE sent us these rates in October 2026, and they're also on <a href="https://charge.co.za/ev-drivers/charge-dc-charging-rates/" target="_blank" rel="noopener">CHARGE's rates page ↗</a>. The average speed is well below a charger's rating: cars slow the charge as the battery fills.</p>
@@ -336,31 +336,31 @@
             <legend><span class="dot dot--ev" aria-hidden="true"></span> The EV's instalment</legend>
             <div class="field">
               <label for="instalment">Monthly instalment</label>
-              <div class="with-unit"><span class="unit-before">R</span><input id="instalment" type="number" inputmode="numeric" min="0" step="100"><span>/ month</span></div>
+              <div class="with-unit"><span class="unit-before">R</span><input id="instalment" type="text" inputmode="numeric" min="0" step="100"><span>/ month</span></div>
               <p class="hint" id="instalment-hint"></p>
             </div>
             <div class="field-row field-row--end">
               <div class="field">
                 <label for="finPrice">EV price</label>
-                <div class="with-unit"><span class="unit-before">R</span><input id="finPrice" type="number" inputmode="numeric" min="0" step="5000"></div>
+                <div class="with-unit"><span class="unit-before">R</span><input id="finPrice" type="text" inputmode="numeric" min="0" step="5000"></div>
               </div>
               <div class="field">
                 <label for="finDeposit">Deposit or trade-in</label>
-                <div class="with-unit"><span class="unit-before">R</span><input id="finDeposit" type="number" inputmode="numeric" min="0" step="5000"></div>
+                <div class="with-unit"><span class="unit-before">R</span><input id="finDeposit" type="text" inputmode="numeric" min="0" step="5000"></div>
               </div>
             </div>
             <div class="field-row field-row--3 field-row--end field-row--fin">
               <div class="field">
                 <label for="finRate">Interest</label>
-                <div class="with-unit"><input id="finRate" type="number" inputmode="decimal" min="0" max="40" step="0.25"><span>%</span></div>
+                <div class="with-unit"><input id="finRate" type="text" inputmode="decimal" min="0" max="40" step="0.25"><span>%</span></div>
               </div>
               <div class="field">
                 <label for="finMonths">Term</label>
-                <div class="with-unit"><input id="finMonths" type="number" inputmode="numeric" min="12" max="96" step="12"><span>mo</span></div>
+                <div class="with-unit"><input id="finMonths" type="text" inputmode="numeric" min="12" max="96" step="12"><span>mo</span></div>
               </div>
               <div class="field">
                 <label for="finBalloon">Balloon</label>
-                <div class="with-unit"><input id="finBalloon" type="number" inputmode="numeric" min="0" max="60" step="5"><span>%</span></div>
+                <div class="with-unit"><input id="finBalloon" type="text" inputmode="numeric" min="0" max="60" step="5"><span>%</span></div>
               </div>
             </div>
             <p class="hint" id="finance-hint"></p>
@@ -371,17 +371,17 @@
             <div class="field-row field-row--end">
               <div class="field">
                 <label for="oldRepairsMonth">Your car's servicing and repairs</label>
-                <div class="with-unit"><span class="unit-before">R</span><input id="oldRepairsMonth" type="number" inputmode="numeric" min="0" step="100"><span>/ month</span></div>
+                <div class="with-unit"><span class="unit-before">R</span><input id="oldRepairsMonth" type="text" inputmode="numeric" min="0" step="100"><span>/ month</span></div>
               </div>
               <div class="field">
                 <label for="evServiceMonth">The EV's servicing</label>
-                <div class="with-unit"><span class="unit-before">R</span><input id="evServiceMonth" type="number" inputmode="numeric" min="0" step="100"><span>/ month</span></div>
+                <div class="with-unit"><span class="unit-before">R</span><input id="evServiceMonth" type="text" inputmode="numeric" min="0" step="100"><span>/ month</span></div>
               </div>
             </div>
             <p class="hint">Average out a year: services, tyres and the repairs an older car needs. R800 is an example. Use 0 for the EV if it comes with a service plan.</p>
             <div class="field">
               <label for="evIns">Extra insurance for the EV</label>
-              <div class="with-unit"><span class="unit-before">R</span><input id="evIns" type="number" inputmode="numeric" min="0" step="50"><span>/ month</span></div>
+              <div class="with-unit"><span class="unit-before">R</span><input id="evIns" type="text" inputmode="numeric" min="0" step="50"><span>/ month</span></div>
               <p class="hint">A new car, and an EV especially, usually costs more to insure than an older car. Get a quote and enter the difference.</p>
             </div>
           </fieldset>
@@ -393,7 +393,7 @@
               <label class="check"><input id="wallboxIncluded" type="checkbox"> Wall-box charger included</label>
               <div class="field" id="wallbox-price">
                 <label for="chargerCost">Wall box, installed</label>
-                <div class="with-unit"><span class="unit-before">R</span><input id="chargerCost" type="number" inputmode="numeric" min="0" step="1000"></div>
+                <div class="with-unit"><span class="unit-before">R</span><input id="chargerCost" type="text" inputmode="numeric" min="0" step="1000"></div>
                 <p class="hint">Use 0 if you'll charge from a normal plug or won't charge at home.</p>
               </div>
             </div>
@@ -401,7 +401,7 @@
               <label class="check"><input id="portableIncluded" type="checkbox"> Portable charger included</label>
               <div class="field" id="portable-price">
                 <label for="portableCost">Portable charger</label>
-                <div class="with-unit"><span class="unit-before">R</span><input id="portableCost" type="number" inputmode="numeric" min="0" step="500"></div>
+                <div class="with-unit"><span class="unit-before">R</span><input id="portableCost" type="text" inputmode="numeric" min="0" step="500"></div>
                 <p class="hint">The cable that charges from an ordinary wall plug, at home or away. Use 0 if you won't buy one.</p>
               </div>
             </div>
@@ -409,7 +409,7 @@
               <label class="check"><input id="v2lIncluded" type="checkbox"> V2L cable included</label>
               <div class="field" id="v2l-price">
                 <label for="v2lCost">V2L cable</label>
-                <div class="with-unit"><span class="unit-before">R</span><input id="v2lCost" type="number" inputmode="numeric" min="0" step="500"></div>
+                <div class="with-unit"><span class="unit-before">R</span><input id="v2lCost" type="text" inputmode="numeric" min="0" step="500"></div>
                 <p class="hint">Vehicle-to-load: runs lights, a fridge or tools off the car's battery (handy in load shedding or camping), if the car supports it. Use 0 if you don't want one.</p>
               </div>
             </div>
@@ -460,11 +460,11 @@
             <div class="field-row">
               <div class="field">
                 <label for="evPrice">Electric car</label>
-                <div class="with-unit"><span class="unit-before">R</span><input id="evPrice" type="number" inputmode="numeric" min="0" step="5000"></div>
+                <div class="with-unit"><span class="unit-before">R</span><input id="evPrice" type="text" inputmode="numeric" min="0" step="5000"></div>
               </div>
               <div class="field">
                 <label for="fuelCarPrice">The fuel car you'd buy instead</label>
-                <div class="with-unit"><span class="unit-before">R</span><input id="fuelCarPrice" type="number" inputmode="numeric" min="0" step="5000"></div>
+                <div class="with-unit"><span class="unit-before">R</span><input id="fuelCarPrice" type="text" inputmode="numeric" min="0" step="5000"></div>
               </div>
             </div>
             <p class="hint">Example figures: type in real quotes.</p>
@@ -474,26 +474,26 @@
             <div class="field-row">
               <div class="field">
                 <label for="evService">EV servicing a year</label>
-                <div class="with-unit"><span class="unit-before">R</span><input id="evService" type="number" inputmode="numeric" min="0" step="500"></div>
+                <div class="with-unit"><span class="unit-before">R</span><input id="evService" type="text" inputmode="numeric" min="0" step="500"></div>
               </div>
               <div class="field">
                 <label for="fuelService">Fuel car servicing a year</label>
-                <div class="with-unit"><span class="unit-before">R</span><input id="fuelService" type="number" inputmode="numeric" min="0" step="500"></div>
+                <div class="with-unit"><span class="unit-before">R</span><input id="fuelService" type="text" inputmode="numeric" min="0" step="500"></div>
               </div>
             </div>
             <p class="hint">Examples: EVs have no oil, filters, spark plugs or clutch to replace. A service plan in the price makes this 0 for those years.</p>
             <div class="field-row field-row--3">
               <div class="field">
                 <label for="years">Keep it for</label>
-                <div class="with-unit"><input id="years" type="number" inputmode="numeric" min="1" max="15" step="1"><span>years</span></div>
+                <div class="with-unit"><input id="years" type="text" inputmode="numeric" min="1" max="15" step="1"><span>years</span></div>
               </div>
               <div class="field">
                 <label for="fuelRise">Fuel rises</label>
-                <div class="with-unit"><input id="fuelRise" type="number" inputmode="decimal" min="-20" max="50" step="1"><span>% / yr</span></div>
+                <div class="with-unit"><input id="fuelRise" type="text" inputmode="decimal" min="-20" max="50" step="1"><span>% / yr</span></div>
               </div>
               <div class="field">
                 <label for="elecRise">Electricity rises</label>
-                <div class="with-unit"><input id="elecRise" type="number" inputmode="decimal" min="-20" max="50" step="1"><span>% / yr</span></div>
+                <div class="with-unit"><input id="elecRise" type="text" inputmode="decimal" min="-20" max="50" step="1"><span>% / yr</span></div>
               </div>
             </div>
             <p class="hint">Electricity went up 9.01% for municipal customers in July 2026. Insurance, finance and resale value aren't included: get quotes for both cars, they can swing the answer.</p>
@@ -609,12 +609,12 @@
     </div>
   </footer>
 
-  <script src="js/data.js?v=2026-10-20g"></script>
-  <script src="js/calc.js?v=2026-10-20g"></script>
-  <script src="js/viz.js?v=2026-10-20g"></script>
-  <script src="js/app.js?v=2026-10-20g"></script>
-  <script src="js/circuit.js?v=2026-10-20g"></script>
-  <script src="js/fx.js?v=2026-10-20g"></script>
+  <script src="js/data.js?v=2026-10-21a"></script>
+  <script src="js/calc.js?v=2026-10-21a"></script>
+  <script src="js/viz.js?v=2026-10-21a"></script>
+  <script src="js/app.js?v=2026-10-21a"></script>
+  <script src="js/circuit.js?v=2026-10-21a"></script>
+  <script src="js/fx.js?v=2026-10-21a"></script>
 
   <!-- GoatCounter: cookie-free page-visit stats at https://psyphin.goatcounter.com/ (never sees form inputs) -->
   <!-- Shared with psyphin.co.za: prefix paths with the host so this site's "/" is counted separately -->
