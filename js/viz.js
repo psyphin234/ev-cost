@@ -18,10 +18,13 @@
 (function () {
   "use strict";
 
+  // fmt: app.js's formatters, handed over by EVViz.format(). COL: colours, read once.
   var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var fmt = {};
   var COL = null;
 
+  // The page's colours as [r, g, b], from the CSS tokens in style.css, so the
+  // diagrams match the rest of the page.
   function colours() {
     if (COL) return COL;
     var css = getComputedStyle(document.documentElement);
@@ -46,6 +49,7 @@
     return "rgba(" + c[0] + ", " + c[1] + ", " + c[2] + ", " + a + ")";
   }
 
+  // Ease in and out (cubic), for t from 0 to 1.
   function ease(t) {
     t = Math.max(0, Math.min(1, t));
     return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
@@ -104,6 +108,9 @@
   // ------------------------------------------------------------ the stage
   // One canvas, sized to its box, that animates only while it's on screen and
   // has something to animate: until a given time, or for good (forever).
+  // until/forever: how long to keep animating. seen: it has been on screen at least
+  // once (onFirstView then starts the first play). draw(ctx, now) is set by each
+  // diagram.
   function Stage(box, height, cls, label) {
     var self = this;
     this.box = box;
@@ -188,6 +195,7 @@
   var raceS = null, raceD = null, raceT0 = null, raceTimer = 0;
   var RACE_MS = 3200;
 
+  // d: {fuel100, ev100, fuelLabel} (rand per 100 km), or null to hide it.
   function race(box, d) {
     box.hidden = !d;
     if (!d) return;
@@ -294,6 +302,8 @@
   var tripS = null, tripD = null;
   var DRIVE_MS = 6500, STOP_MS = 1500, HOLD_MS = 2200;
 
+  // pts: calc.js tripProfile() points; tr: calc.js trip() result; st: the settings
+  // a stop's cost and time need (battery, lossPct, n3Price, dcKw, reservePct).
   function trip(box, pts, tr, st) {
     if (!tripS) {
       tripS = new Stage(box, 214, "viz-trip", "Battery level along the trip, with the car driving it and each charging stop's energy, time and cost.");
@@ -458,6 +468,8 @@
   var jarS = null, jarD = null, jarFrom = 0, jarTo = 0, jarT0 = 0;
   var JAR_MS = 1600;
 
+  // d: {instalment, saving} (rand a month), or null to hide it. A change pours from
+  // the current level to the new one.
   function jar(box, d) {
     box.hidden = !d;
     if (!d) return;
@@ -478,6 +490,7 @@
     jarS.paint();
   }
 
+  // How full the jar is right now (1 = the instalment).
   function currentLevel(now) {
     if (reduceMotion) return jarTo;
     if (!jarS.seen) return 0;
@@ -593,6 +606,8 @@
   var payS = null, payD = null, payFrom = null, payT0 = 0, revealT0 = null;
   var REVEAL_MS = 2000, MORPH_MS = 700;
 
+  // o: calc.js ownership() result. When only the figures change (same number of
+  // years), the lines move smoothly to their new shape.
   function payback(box, o) {
     if (!payS) {
       payS = new Stage(box, 232, "viz-pay", "Total cost of each car year by year, with the point where the electric car pays back.");
@@ -612,6 +627,7 @@
     payS.paint();
   }
 
+  // The cost lines as drawn right now, part-way through a change.
   function shownSeries(now) {
     var o = payD;
     if (!payFrom || reduceMotion) return { fuel: o.fuel.slice(), ev: o.ev.slice(), be: o.breakEven };
@@ -746,6 +762,7 @@
     }
   }
 
+  // What app.js calls; it checks window.EVViz first, so the page works without this file.
   window.EVViz = {
     format: function (f) { fmt = f; },
     race: race,

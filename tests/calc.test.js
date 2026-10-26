@@ -12,6 +12,9 @@
     document.getElementById("summary").textContent = "FAILED: script error: " + e.message;
   });
 
+  // test() records a pass or a failure; eq() and near() throw on a mismatch (near()
+  // allows a tolerance for sums with rounding). The page shows every result and a
+  // summary line that run.ps1 reads.
   function test(name, fn) {
     try {
       fn();

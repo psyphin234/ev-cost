@@ -2,6 +2,9 @@
 (function () {
   "use strict";
 
+  // D: every figure and default (data.js). C: the sums (calc.js). STORE: the
+  // localStorage key a visitor's inputs are saved under; change it only to drop
+  // everyone's saved inputs.
   var D = window.EV;
   var C = window.Calc;
   var STORE = "ev-cost-v1";
@@ -14,6 +17,8 @@
   /* ------------------------------------------------------------ formatting */
   var NB = " ";
 
+  // Thousands separated by a non-breaking space, the South African way: 1 234 567.
+  // rand() and num() show "–" for a missing or impossible value.
   function groupThousands(s) {
     return s.replace(/\B(?=(\d{3})+(?!\d))/g, NB);
   }
@@ -38,6 +43,8 @@
     return Math.round(v * 100) + "%";
   }
 
+  // DOM helpers: el() makes an element (attrs.text sets its text, attrs.class its
+  // class), svg() an SVG element, clear() empties a node.
   function el(tag, attrs, children) {
     var e = document.createElement(tag);
     if (attrs) {
@@ -68,6 +75,7 @@
     return node;
   }
 
+  // A link to a source in data.js by id (or ids, joined with ·), opening in a new tab.
   function sourceLink(id) {
     if (Array.isArray(id)) {
       var span = el("span");
@@ -84,10 +92,15 @@
   }
 
   /* ------------------------------------------------------------ state */
+  // state: every input, saved on each change (save()) so a visitor's figures survive
+  // a reload. live: today's fuel prices from the fuel site, once they've arrived.
   var state = load();
   var live = null; // { inland: {petrol95,...}, effective, change: {petrol95: c/l, ...} }
   var liveStatus = "loading"; // loading | ok | failed
 
+  // The defaults, with whatever the visitor saved laid over them. A saved value is
+  // only used if it has the expected type, so an old or damaged store can't break
+  // the page.
   function load() {
     var s = JSON.parse(JSON.stringify(D.defaults));
     try {
@@ -110,6 +123,8 @@
     } catch (e) { /* ignore */ }
   }
 
+  // Today's fuel prices in R/litre, live or data.js's fallback. Coastal prices are
+  // inland less the transport-zone gap.
   function prices() {
     if (live) {
       var p = live.inland;
@@ -124,6 +139,7 @@
     return { inland: D.fuelFallback.inland, coastal: D.fuelFallback.coastal, effective: D.fuelFallback.effective, live: false };
   }
 
+  // state.fuelPrice null means "today's price"; a number is the visitor's own.
   function currentFuelPrice() {
     return prices()[state.region][state.fuel];
   }
@@ -133,6 +149,12 @@
   }
 
   /* ------------------------------------------------------------ live fuel price from fuel.psyphin.co.za */
+  // Reads the fuel site's published data (data.js liveFeed.url; GitHub Pages lets
+  // any site read it). It relies on two fields of that file:
+  // latest_official_report.current_price (c/l, Gauteng) and
+  // predictions[fuel].predicted_pump_price_change_c_per_l, so if the fuel site's
+  // data changes shape, update this. Gives up after 8 seconds and keeps the
+  // fallback prices; either way it redraws.
   function fetchLive() {
     var ctrl = window.AbortController ? new AbortController() : null;
     var timer = setTimeout(function () {
@@ -168,6 +190,7 @@
       });
   }
 
+  // "13 October 2026". Read at noon so a time zone can't move it to another day.
   function longDate(iso) {
     var d = new Date(iso + "T12:00:00");
     if (isNaN(d)) return iso;
@@ -175,12 +198,15 @@
   }
 
   /* ------------------------------------------------------------ building controls */
+  // A toggle button. Which chip in a group is selected is set in render() (pressed()).
   function chip(label, attrs, onClick) {
     var b = el("button", Object.assign({ type: "button", class: "chip" }, attrs || {}), [label]);
     b.addEventListener("click", onClick);
     return b;
   }
 
+  // Builds the chips and wires up every control, once. Each handler changes state
+  // and calls changed(); nothing is drawn here.
   function build() {
     var cc = $("class-chips");
     D.classes.forEach(function (c) {
@@ -331,11 +357,14 @@
     buildSources();
   }
 
+  // The home tariff whose price matches a typed one, so its chip lights up.
   function matchTariff(v) {
     var t = D.tariffs.home.filter(function (h) { return Math.abs(h.value - v) < 0.005; })[0];
     return t ? t.id : "";
   }
 
+  // After any change: save, then redraw. fromInput is the box being typed in, which
+  // render() leaves alone so it doesn't rewrite what's being typed.
   var editing = null;
   function changed(fromInput) {
     editing = fromInput || null;
@@ -353,12 +382,16 @@
     if (input.value !== s) input.value = s;
   }
 
+  // Marks which chip in a group is selected (aria-pressed).
   function pressed(selector, attr, value) {
     document.querySelectorAll(selector).forEach(function (b) {
       b.setAttribute("aria-pressed", String(b.getAttribute(attr) === value));
     });
   }
 
+  // Redraws everything from state: cheap enough to run on every keystroke. `s` is
+  // state as calc.js expects it: the fuel price filled in, and chargerCost as the
+  // whole charging kit to buy.
   function render() {
     var fp = fuelPrice();
     // chargerCost here is the whole charging kit the buyer pays for
@@ -434,6 +467,7 @@
       (state.v2lIncluded ? 0 : Math.max(0, state.v2lCost));
   }
 
+  // The line under the header: today's fuel prices and where they came from.
   function renderLiveLine() {
     var p = prices();
     var line = clear($("live-line"));
@@ -451,6 +485,7 @@
     }
   }
 
+  // The small print under the inputs, which follows what's typed.
   function renderHints(fp) {
     $("km-year").textContent = num(state.kmMonth * 12) + " km a year.";
 
@@ -547,6 +582,8 @@
     h.appendChild(document.createTextNode("Add more for 120 km/h, a roof rack, a trailer or a headwind."));
   }
 
+  // Fills the "Why does an EV need more at highway speed?" fold-out, once, from
+  // data.js's highway figures.
   function buildHighwayWhy() {
     var hw = D.highway;
     var body = $("highway-why-body");
@@ -575,6 +612,9 @@
   }
 
   /* ------------------------------------------------------------ 1. everyday */
+  // Section 1 results: the two monthly tiles, the headline, the phones' bottom bar,
+  // the cost per 100 km bars and race, the tipping points, and next month's
+  // projected fuel price change (from the fuel site).
   function renderRunning(s, r) {
     var fuelLabel = D.fuels[state.fuel].label;
     $("tile-fuel-label").textContent = "Fuel car (" + fuelLabel + ")";
@@ -656,6 +696,8 @@
   }
 
   /* ------------------------------------------------------------ 2. road trip */
+  // Section 2: the road trip's cost for each car, the charging stops, the battery
+  // chart, and CHARGE's chargers on the chosen road.
   function renderTrip(s) {
     var tr = C.trip({
       km: state.tripKm, returnTrip: state.returnTrip, battery: state.battery, startPct: state.startPct,
@@ -710,6 +752,7 @@
     $("n3-card").hidden = !chargers.length;
   }
 
+  // Minutes as "1 h 25 min", rounded to 5 minutes.
   function duration(min) {
     min = Math.round(min / 5) * 5;
     if (min < 60) return min + " min";
@@ -718,6 +761,7 @@
     return h + " h" + (m ? " " + m + " min" : "");
   }
 
+  // The battery chart: viz.js's animated one when it's loaded, else a plain SVG.
   function drawTrip(pts, tr) {
     var box = $("trip-chart");
     if (!pts.length) {
@@ -763,8 +807,9 @@
     box.appendChild(s);
   }
 
-  /* ------------------------------------------------------------ 3. buying */
   /* ------------------------------------------------------------ 3. keep or finance */
+  // state.instalment null means "work it out from the finance inputs"; a number is
+  // a quote the visitor typed.
   function workedInstalment() {
     return Math.round(C.instalment(state.evPrice, state.finDeposit, state.finRate, state.finMonths, state.finBalloon, D.finance.fees));
   }
@@ -773,6 +818,8 @@
     return typeof state.instalment === "number" ? state.instalment : workedInstalment();
   }
 
+  // Section 3: keep the current car, or finance an EV? Monthly cost of each, what
+  // the savings cover, and what that means for the car price and km a month.
   function renderKeep(s, run) {
     var worked = workedInstalment();
     var pay = instalmentValue();
@@ -850,6 +897,7 @@
     }
   }
 
+  // The two stacked monthly bars (keep or finance) and their key.
   function drawStack(k) {
     var box = clear($("keep-stack"));
     var max = Math.max(k.keep.total, k.buy.total) || 1;
@@ -878,6 +926,9 @@
     box.appendChild(legend);
   }
 
+  /* ------------------------------------------------------------ 4. buying outright */
+  // Section 4: buying outright. The charging kit line, the payback headline, the
+  // cost chart and the totals table.
   function renderOwnership(s, run) {
     var o = C.ownership(s, run);
     var missing = [["wallboxIncluded", "wall box"], ["portableIncluded", "portable charger"], ["v2lIncluded", "V2L cable"]]
@@ -913,12 +964,14 @@
     t.appendChild(tb);
   }
 
+  // "8 months", "2.5 years".
   function yearsText(y) {
     if (y < 1) return Math.max(1, Math.round(y * 12)) + " months";
     var r = Math.round(y * 2) / 2;
     return (r % 1 ? num(r, 1) : String(r)) + " year" + (r === 1 ? "" : "s");
   }
 
+  // The cost chart: viz.js's animated one when it's loaded, else a plain SVG.
   function drawOwnership(o) {
     // animated: the lines drawn across, the break-even marked (viz.js)
     if (window.EVViz) {
@@ -966,6 +1019,7 @@
     box.appendChild(s);
   }
 
+  // A round axis step near raw: 1, 2 or 5 times a power of ten.
   function niceStep(raw) {
     if (!(raw > 0)) return 1;
     var p = Math.pow(10, Math.floor(Math.log10(raw)));
@@ -973,6 +1027,7 @@
     return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 5 ? 5 : 10) * p;
   }
 
+  // Axis labels: R650k, R1.2m.
   function short(v) {
     if (Math.abs(v) >= 1e6) return "R" + num(v / 1e6, Math.abs(v) % 1e6 ? 2 : 0) + "m";
     if (Math.abs(v) >= 1e3) return "R" + num(v / 1e3) + "k";
@@ -980,6 +1035,8 @@
   }
 
   /* ------------------------------------------------------------ sources */
+  // "Where the numbers come from", built once from data.js, and the Common questions
+  // answer about charging prices, so both follow price updates there.
   function buildSources() {
     var ps = $("price-sources");
     var fb = D.fuelFallback;
@@ -1041,6 +1098,9 @@
   }
 
   /* ------------------------------------------------------------ go */
+  // Share the formatters with viz.js, build the controls, draw with the fallback
+  // prices, then fetch the live ones (which redraws). Redraw on resize, after a
+  // pause, so the charts fit.
   if (window.EVViz) EVViz.format({ rand: rand, num: num, short: short, duration: duration, yearsText: yearsText });
   build();
   watchQuickbar();

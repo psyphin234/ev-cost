@@ -1,4 +1,17 @@
 <!doctype html>
+<!--
+  EV vs Fuel Cost (evcost.psyphin.co.za, served by GitHub Pages from this repo's root).
+
+  Plain HTML, CSS and JavaScript with no build step: this file opens straight from
+  disk. It's the page's skeleton: app.js fills in every result and hint by element
+  id, and nothing typed here ever leaves the browser. Where the code lives:
+    js/data.js   every price, default, preset and source
+    js/calc.js   the sums (no page access, so the tests can run them alone)
+    js/app.js    the inputs, the saved state, the live fuel price, the results
+    js/viz.js    the four animated diagrams; js/fx.js the header animation
+  data-circuit="still": circuit.js draws the background board once, with nothing
+  moving behind the text.
+-->
 <html lang="en-ZA" data-circuit="still">
 <head>
   <meta charset="utf-8">
@@ -6,6 +19,9 @@
   <title>EV vs Fuel Cost: SA Electric vs Petrol Calculator | PsyPhin</title>
   <meta name="description" content="Compare the cost per km of an electric car with petrol or diesel in South Africa, at today's fuel price, your electricity tariff and public charger prices.">
   <link rel="canonical" href="https://evcost.psyphin.co.za/">
+  <!-- For search engines: what the page is. Keep "description" the same as the meta
+       description above (at most 155 characters: search results cut the rest). The
+       Open Graph tags below are what link previews show when it's shared. -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -44,11 +60,15 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
+  <!-- The ?v= on the stylesheet and the six scripts at the bottom is a cache-buster:
+       when any of the seven files changes, give them all the same new value, so a
+       browser never pairs this page with an old cached script. -->
   <link rel="stylesheet" href="css/style.css?v=2026-10-21a">
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
 
+  <!-- Header. fx.js draws the engine against motor animation on the canvas behind it. -->
   <header class="brand-bar brand-bar--hero">
     <canvas class="hero-fx" aria-hidden="true"></canvas>
     <div class="brand-nav">
@@ -70,6 +90,7 @@
   </header>
 
   <main id="main" class="wrap">
+    <!-- #live-line: today's fuel prices and where they came from (app.js renderLiveLine). -->
     <section class="intro">
       <p class="lede">Filled in with today's prices so you get an answer straight away. Change anything in a <span class="key-input">blue box</span> to match your car, your bill and how you'd charge.</p>
       <p class="privacy">Worked out in your browser. Nothing you type is sent anywhere. Your inputs are remembered on this device only. <button type="button" class="link-button" id="reset">Reset to defaults</button></p>
@@ -81,6 +102,11 @@
       <h2 class="block-title" id="running-title"><span class="block-num">1</span> Everyday driving</h2>
 
       <div class="calc-layout">
+        <!-- The inputs. Each box's id is the name app.js keeps its value under (and its
+             default's name in data.js). Number boxes are type="text" with inputmode, not
+             type="number": an iPhone's number box turns a decimal comma ("6,2") into 62.
+             app.js reads them with Calc.parseNumber() and steps them with the arrow keys
+             using each box's step/min/max. Keep new number boxes the same way. -->
         <form class="inputs" id="form" autocomplete="off" novalidate>
           <fieldset>
             <legend>Compare like with like</legend>
@@ -191,6 +217,7 @@
           </fieldset>
         </form>
 
+        <!-- Results: empty here, filled in by app.js. #race is the animated race (viz.js). -->
         <div class="results" id="results" aria-live="polite">
           <div class="result-card">
             <p class="headline" id="headline"></p>
@@ -548,6 +575,9 @@
     </section>
 
     <!-- ============================================================ common questions -->
+    <!-- Static text, so search engines can read it without running the script, except
+         the charging-price answer (#faq-charge-cost), which app.js fills from data.js's
+         tariffs so it follows price updates. -->
     <section class="block" id="faq" aria-labelledby="faq-title">
       <h2 class="block-title" id="faq-title">Common questions</h2>
       <div class="faq-list">
@@ -575,6 +605,7 @@
     </section>
 
     <!-- ============================================================ sources -->
+    <!-- The lists are built by app.js buildSources() from data.js. -->
     <section class="block" id="sources" aria-labelledby="sources-title">
       <h2 class="block-title" id="sources-title">Where the numbers come from</h2>
       <div class="sources-grid">
@@ -600,6 +631,8 @@
     </aside>
   </main>
 
+  <!-- Phones: a bar along the bottom with the monthly figures, shown while the inputs
+       are on screen but the results aren't (app.js watchQuickbar). -->
   <a class="quickbar" id="quickbar" href="#results" hidden aria-label="Jump to the results"><span class="q-fuel" id="q-fuel"></span><span class="q-ev" id="q-ev"></span><span class="q-save" id="q-save"></span></a>
 
   <footer class="site-footer">
@@ -609,6 +642,9 @@
     </div>
   </footer>
 
+  <!-- Order matters: data.js (window.EV) and calc.js (window.Calc) first, then viz.js
+       (window.EVViz), then app.js, which uses all three. circuit.js and fx.js are
+       decoration. -->
   <script src="js/data.js?v=2026-10-21a"></script>
   <script src="js/calc.js?v=2026-10-21a"></script>
   <script src="js/viz.js?v=2026-10-21a"></script>

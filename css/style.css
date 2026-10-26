@@ -2,6 +2,9 @@
    "deep space" look shared by every PsyPhin site since 2026-10-18. The base is
    the SA Towing Check / Winch stylesheet, so the tools look the same. */
 :root {
+  /* Colours are CSS variables ("tokens"), set here and used everywhere else; viz.js
+     reads --fuel, --ev, --good and --bad from them too, so they must stay 6-digit
+     hex. After changing this file, bump the ?v= in index.html (all seven together). */
   --bg: #040817;
   --surface: #0b1330;
   --surface-2: #101a3c;
@@ -569,6 +572,8 @@ h3 {
   }
 }
 
+/* Kept from the shared base stylesheet. The construction banner isn't on the page
+   now, but its styles stay for when a page goes back into testing. */
 /* ============================================================ Winch Planning and Sizing additions */
 
 /* ------------------------------------------------------------ under construction (same as the tyre calculator) */

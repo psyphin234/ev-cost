@@ -17,6 +17,8 @@
   var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   // ---------------------------------------------------------------- fade-ins
+  // Fieldsets and "good to know" cards start faded (.fx-reveal in style.css) and
+  // ease in the first time they scroll into view.
   function setUpReveal() {
     if (reduceMotion || !("IntersectionObserver" in window)) return;
     var targets = document.querySelectorAll(".inputs fieldset, .know-grid > *");
@@ -59,6 +61,9 @@
     return -(R * Math.cos(a) + Math.sqrt(ROD * ROD - sx * sx));
   }
 
+  // Draws the header animation on canvas.hero-fx. resize() places the scene beside
+  // the title when there's room (or faint behind it on narrow screens), and the
+  // loop only runs while the header is on screen and the tab is visible.
   function setUpHero() {
     var canvas = document.querySelector(".hero-fx");
     if (!canvas || !canvas.getContext) return;
@@ -472,6 +477,7 @@
     update();
   }
 
+  // Wait for the page's HTML before touching it.
   function start() { setUpReveal(); setUpHero(); }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start);
   else start();

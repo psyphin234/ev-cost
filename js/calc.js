@@ -2,6 +2,7 @@
 window.Calc = (function () {
   "use strict";
 
+  // Keeps v between lo and hi.
   function clamp(v, lo, hi) {
     return Math.min(hi, Math.max(lo, v));
   }
@@ -42,6 +43,7 @@ window.Calc = (function () {
     return { home: home / sum, ac: ac / sum, dc: dc / sum };
   }
 
+  // Average price per kWh across the charging mix.
   function mixPrice(prices, mix) {
     return prices.home * mix.home + prices.ac * mix.ac + prices.dc * mix.dc;
   }
@@ -270,6 +272,7 @@ window.Calc = (function () {
   }
 
   return {
+    // window.Calc: used by app.js and the tests (tests/calc.test.js).
     clamp: clamp,
     parseNumber: parseNumber,
     instalment: instalment,

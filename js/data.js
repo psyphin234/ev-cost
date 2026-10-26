@@ -4,6 +4,10 @@
 window.EV = (function () {
   "use strict";
 
+  // Every source the page cites, by id. The figures below point at these ids
+  // (source: "id", or a list of ids); app.js turns them into the small "↗" links
+  // and the full list under "Where the numbers come from". label: optional link
+  // text in place of the publisher's name; a source without a url shows as text.
   var sources = {
     fuelLive: {
       title: "SA Fuel Price Preview: current official pump prices (CEF), updated hourly",
@@ -163,6 +167,7 @@ window.EV = (function () {
     coastalGap: 0.87
   };
 
+  // The fuel car's fuel choices. The keys match the fuel site's.
   var fuels = {
     petrol95: { label: "Petrol 95", short: "95" },
     petrol93: { label: "Petrol 93", short: "93" },
@@ -235,6 +240,8 @@ window.EV = (function () {
     // the bank's fees on a car loan: the National Credit Act maximums, which the banks charge as standard
     fees: { initiation: 1207.50, monthly: 69, source: "ncaFees" } };
 
+  // Road-trip presets. road: the highway it runs on, so the chargers card under the
+  // trip lists the chargers on that road (no road: no chargers card).
   var routes = [
     { id: "jhb-dbn", label: "Joburg to Durban (N3)", km: 570, road: "N3" },
     { id: "jhb-pmb", label: "Joburg to Pietermaritzburg (N3)", km: 490, road: "N3" },
@@ -251,6 +258,9 @@ window.EV = (function () {
     { name: "CHARGE N12 Wolmaransstad", road: "N12", where: "North West, N12 between Klerksdorp and Wolmaransstad, at the Leeudoringstad turnoff (Farm Flair farm stall)", what: "6 DC fast-charging bays (CCS2) at R9.15/kWh + 2 AC, free until the end of May 2027, open 24 hours", source: ["chargeWolmaransstad", "chargeTariff"] }
   ];
 
+  // Every input's starting value, under the same name app.js keeps it by in its
+  // state. A visitor's own values are saved in their browser (localStorage) and
+  // replace these; "Reset to defaults" brings these back.
   var defaults = {
     region: "inland",
     sizeClass: "suv",
@@ -306,6 +316,8 @@ window.EV = (function () {
     oldRepairsMonth: 800
   };
 
+  // The "Good to know" list, in order. A test (tests/calc.test.js) checks that the
+  // percentages quoted in "highway" and "realWorld" still match the `highway` data.
   var assumptions = [
     { id: "wltp", text: "Spec-sheet (WLTP) EV figures are measured at the wall socket, so they already include charging losses. A car's own trip computer shows what the battery delivered, so add 10 to 15% for losses when you use that figure.", source: "wltpReg" },
     { id: "highway", text: "EVs use noticeably more energy at highway speed: air drag rises with the square of speed. EV Database's real-world figures at a steady 110 km/h for five cars are 29 to 47% above their WLTP figures, and 23 to 29% above their real mixed-driving figures, so the trip planner suggests 40% and 25%. At 120 km/h drag is another 19% higher.", source: "evdbCars" },
@@ -332,6 +344,7 @@ window.EV = (function () {
     highwayChargers: highwayChargers,
     defaults: defaults,
     assumptions: assumptions,
+    // when the prices in this file were last checked against their sources
     checked: "2026-10-13"
   };
 })();
