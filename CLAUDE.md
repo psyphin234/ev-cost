@@ -4,7 +4,7 @@ Static calculator comparing the cost of driving electric vs petrol/diesel in Sou
 
 Repo `psyphin234/ev-cost` (public), GitHub Pages from `main` / root. Push to `main` to deploy; check with `gh api repos/psyphin234/ev-cost/pages/builds/latest`.
 
-**Address: https://evcost.psyphin.co.za/** since 2026-10-13 (the `CNAME` file here, plus the Afrihost CNAME `evcost.psyphin.co.za` → `psyphin234.github.io`). Card on psyphin.co.za (Tools) since 2026-10-13. Since 2026-10-30 (owner's request) the card's image is `assets/img/projects/ev-cost-motors.jpg` there: this page's header picture, the petrol engine vs electric motor from `js/fx.js`, drawn alone on an 800x450 header. This page's Open Graph image is still `ev-cost.jpg` there: a crop of the "Cost per 100 km" card at the default figures (900 px window, 2x; since 2026-10-19 a 16:9 area from the card's top with the race finished), which was the card's image until 2026-10-30.
+**Address: https://evcost.psyphin.co.za/** since 2026-10-13 (the `CNAME` file here, plus the Afrihost CNAME `evcost.psyphin.co.za` → `psyphin234.github.io`). Card on psyphin.co.za (Tools) since 2026-10-13. Since 2026-10-30 (owner's request) the card's image is `assets/img/projects/ev-cost-motors.jpg` there: this page's header picture, the petrol engine vs electric motor from `js/fx.js`, drawn alone on an 800x450 header. It is also this page's Open Graph image (owner, 2026-10-30). Before that both used `ev-cost.jpg` there, a crop of the "Cost per 100 km" card at the default figures; it is kept but no longer used.
 
 Plain HTML/CSS/vanilla JS, classic scripts, no build step: `index.html` opens straight from disk. Inputs are kept in the visitor's `localStorage` (key `ev-cost-v1`).
 
